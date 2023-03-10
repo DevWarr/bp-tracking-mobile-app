@@ -9,10 +9,15 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@google-cloud/local-auth": "^2.1.0",
+    "@react-native-async-storage/async-storage": "^1.17.11",
     "expo": "~47.0.9",
     "expo-status-bar": "~1.4.2",
+    "googleapis": "^105.0.0",
     "react": "18.1.0",
-    "react-native": "0.70.5"
+    "react-native": "0.70.5",
+    "react-native-google-sheet": "^0.0.5",
+    "react-native-webview": "^11.26.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"
