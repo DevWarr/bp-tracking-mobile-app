@@ -1,23 +1,22 @@
 import { Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Ionicons from "@expo/vector-icons/Ionicons"
 import { useState } from 'react';
+import { BloodPressureRecording } from '../models/BloodPressureRecording';
 
 /**
-   * Renders a single BloodPressure Recording as a row
-   * 
-   * @param {{item: BloodPressureRecording}} param0 
-   */
-export const BloodPressureFlatListItem = ({ item }) => {
+ * Renders a single BloodPressure Recording as a row
+ */
+export const BloodPressureFlatListItem = ({ item }: { item: BloodPressureRecording; }) => {
 
   const [shouldShowNotes, setShouldShowNotes] = useState(false)
 
   const renderBloodPressureInfo = () => (
     <>
-      <Text style={[styles.rowText, styles.datetime]}>{item.getDateInfo()}</Text>
-      <Text style={[styles.rowText, styles.bloodPressure]}>
+      <Text style={styles.rowText}>{item.getDateInfo()}</Text>
+      <Text style={styles.rowText}>
         {item.systolic} / {item.diastolic}
       </Text>
-      <Text style={[styles.rowText, styles.heartRate]}>{item.heartRate}</Text>
+      <Text style={styles.rowText}>{item.heartRate}</Text>
     </>
   )
 

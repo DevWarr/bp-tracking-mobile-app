@@ -3,26 +3,33 @@
 import 'react-native-get-random-values';
 import { v4 as generateV4UUID } from 'uuid';
 
+export interface IBloodPressureJsonObject {
+  dateTimeNumber: number;
+  systolic: number;
+  diastolic: number;
+  heartRate: number;
+  notes?: string;
+}
+
 export class BloodPressureRecording {
-  /**
-   * Creates a new Blood Pressure Recording object.
-   * 
-   * @param {number} systolic 
-   * @param {number} diastolic 
-   * @param {number} heartRate 
-   * @param {string?} notes 
-   * @param {number?} dateTimeNumber 
-   */
-  constructor(systolic, diastolic, heartRate, notes, dateTimeNumber = null) {
+
+  readonly id: string;
+  readonly datetime: Date;
+  readonly systolic: number;
+  readonly diastolic: number;
+  readonly heartRate: number;
+  readonly notes?: string;
+
+  constructor(systolic: number, diastolic: number, heartRate: number, notes?: string, dateTimeNumber?: number) {
     this.id = generateV4UUID();
     this.datetime = dateTimeNumber ? new Date(dateTimeNumber) : new Date()
     this.systolic = systolic
     this.diastolic = diastolic
     this.heartRate = heartRate
-    this.notes = notes ? (notes.trim() || null) : null
+    this.notes = notes ? (notes.trim() || undefined) : undefined
   }
 
-  static buildFromJsonObject = (jsonObject) => {
+  static buildFromJsonObject = (jsonObject: IBloodPressureJsonObject) => {
     return new BloodPressureRecording(
       jsonObject.systolic,
       jsonObject.diastolic,
@@ -32,7 +39,7 @@ export class BloodPressureRecording {
     )
   }
 
-  buildJsonObject = () => {
+  buildJsonObject = (): IBloodPressureJsonObject => {
     return {
       dateTimeNumber: this.datetime.getTime(),
       systolic: this.systolic,
@@ -42,7 +49,7 @@ export class BloodPressureRecording {
     }
   }
 
-  getDateInfo = () => {
+  getDateInfo = (): string => {
     // Make a copy of the date, just in case we make changes to the object for printing
     const dateToPrint = new Date(this.datetime.getTime());
     // If we have a time from midnight to 6AM, that's technically "PM" of the previous day

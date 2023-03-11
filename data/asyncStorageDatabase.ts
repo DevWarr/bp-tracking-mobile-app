@@ -1,12 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { BloodPressureRecording } from '../models';
+import { IBloodPressureJsonObject, BloodPressureRecording } from '../models/BloodPressureRecording';
 
 /**
  * Save data to AsyncStorage
- * 
- * @param {BloodPressureRecording[]} data 
  */
-export const saveData = async (data) => {
+export const saveData = async (data: BloodPressureRecording[]): Promise<void> => {
   if (!data) return;
 
   const jsonData = data.map(bloodPressureRecording => bloodPressureRecording.buildJsonObject())
@@ -23,17 +21,15 @@ export const saveData = async (data) => {
 
 /**
  * Load data from AsyncStorage
- * 
- * @returns {BloodPressureRecording[]}
  */
-export const loadData = async () => {
+export const loadData = async (): Promise<BloodPressureRecording[]> => {
   try {
     const data = await AsyncStorage.getItem('bpData');
     if (data !== null) {
       console.log('Data loaded from AsyncStorage');
       return JSON
         .parse(data)
-        .map(bloodPressureJsonObject => BloodPressureRecording.buildFromJsonObject(bloodPressureJsonObject))
+        .map((bloodPressureJsonObject: IBloodPressureJsonObject) => BloodPressureRecording.buildFromJsonObject(bloodPressureJsonObject))
     } else {
       console.log('No data found in AsyncStorage');
       return [];

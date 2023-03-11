@@ -1,13 +1,14 @@
 import { useState, useRef, useContext, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { BloodPressureRecording } from '../models';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { BloodPressureRecording } from '../models/BloodPressureRecording';
 import { BloodPressureRecordingDispatchContext } from '../data/BloodPressureRecordingProvider';
 import { BloodPressureDispatchAction, BloodPressureDispatchActionType } from '../data/BloodPressureDispatchAction';
+import { AppStackParamList } from '../App';
 
 export const BloodPressureRecordingForm = () => {
   const bloodPressureRecordingDispatch = useContext(BloodPressureRecordingDispatchContext)
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<AppStackParamList, "BloodPressureRecordingForm">>();
 
   const navigateToMainPage = () => {
     navigation.navigate('MainPage');
@@ -19,9 +20,10 @@ export const BloodPressureRecordingForm = () => {
   const [heartRate, setHeartRate] = useState('');
   const [notes, setNotes] = useState('');
 
-  const systolicInputRef = useRef(null);
-  const diastolicInputRef = useRef(null);
-  const heartRateInputRef = useRef(null);
+  const systolicInputRef: React.MutableRefObject<TextInput | null> = useRef(null);
+  const diastolicInputRef: React.MutableRefObject<TextInput | null> = useRef(null);
+  const heartRateInputRef: React.MutableRefObject<TextInput | null> = useRef(null);
+  const notesInputRef: React.MutableRefObject<TextInput | null> = useRef(null);
 
   useEffect(() => {
     if (!errorText.trim()) return;
@@ -29,6 +31,10 @@ export const BloodPressureRecordingForm = () => {
     setTimeout(() => setErrorText(' '), 2000)
 
   }, [errorText])
+
+  useEffect(() => {
+    systolicInputRef.current?.focus()
+  }, [])
 
   const handleAddNewBloodPressureRecording = () => {
     if (!systolic || !diastolic || !heartRate) {
@@ -38,10 +44,10 @@ export const BloodPressureRecordingForm = () => {
 
     const dispatchAction = new BloodPressureDispatchAction(
       BloodPressureDispatchActionType.NEW,
-      new BloodPressureRecording(systolic, diastolic, heartRate, notes)
+      new BloodPressureRecording(Number(systolic), Number(diastolic), Number(heartRate), notes)
     )
 
-    bloodPressureRecordingDispatch(dispatchAction);
+    bloodPressureRecordingDispatch?.(dispatchAction);
     navigateToMainPage();
   }
 
@@ -54,11 +60,11 @@ export const BloodPressureRecordingForm = () => {
         placeholder="Systolic"
         keyboardType="numeric"
         returnKeyType="next"
-        onChangeText={(text) => setSystolic(text)}
+        onChangeText={(text: string) => setSystolic(text)}
         value={systolic}
         ref={systolicInputRef}
         onSubmitEditing={() => {
-          diastolicInputRef.current.focus();
+          diastolicInputRef.current?.focus();
         }}
       />
       <TextInput
@@ -66,11 +72,11 @@ export const BloodPressureRecordingForm = () => {
         placeholder="Diastolic"
         keyboardType="numeric"
         returnKeyType="next"
-        onChangeText={(text) => setDiastolic(text)}
+        onChangeText={(text: string) => setDiastolic(text)}
         value={diastolic}
         ref={diastolicInputRef}
         onSubmitEditing={() => {
-          heartRateInputRef.current.focus();
+          heartRateInputRef.current?.focus();
         }}
       />
       <TextInput
@@ -78,11 +84,11 @@ export const BloodPressureRecordingForm = () => {
         placeholder="Heart rate"
         keyboardType="numeric"
         returnKeyType="next"
-        onChangeText={(text) => setHeartRate(text)}
+        onChangeText={(text: string) => setHeartRate(text)}
         value={heartRate}
         ref={heartRateInputRef}
         onSubmitEditing={() => {
-          heartRateInputRef.current.focus();
+          notesInputRef.current?.focus();
         }}
       />
       <TextInput
@@ -90,7 +96,7 @@ export const BloodPressureRecordingForm = () => {
         placeholder="Notes (optional)"
         multiline
         numberOfLines={4}
-        onChangeText={(text) => setNotes(text)}
+        onChangeText={(text: string) => setNotes(text)}
         value={notes}
       />
       <TouchableOpacity style={styles.addButton} onPress={handleAddNewBloodPressureRecording}>

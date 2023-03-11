@@ -1,1 +1,0 @@
-export { BloodPressureRecording } from "./BloodPressureRecording"

@@ -1,20 +1,17 @@
 import React, { useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 import Ionicons from "@expo/vector-icons/Ionicons"
 import Clipboard from '@react-native-community/clipboard';
 import base64 from 'react-native-base64';
 
 import { BloodPressureRecordingContext } from '../data/BloodPressureRecordingProvider';
-import { BloodPressureRecording } from '../models';
 import { BloodPressureFlatListItem } from './BloodPressureFlatListItem';
+import { AppStackParamList } from '../App';
 
 export const MainPage = () => {
-  /**
-   * @type {BloodPressureRecording[]?}
-   */
   const bloodPressureRecordings = useContext(BloodPressureRecordingContext)
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<AppStackParamList, "MainPage">>();
 
   const navigateToBloodPressureRecordingForm = () => {
     navigation.navigate('BloodPressureRecordingForm');
@@ -30,9 +27,9 @@ export const MainPage = () => {
   const renderHeader = () => {
     return (
       <View style={styles.tableHeader}>
-        <Text style={[styles.headerText, styles.datetime]}>Date/Time</Text>
-        <Text style={[styles.headerText, styles.bloodPressure]}>Blood Pressure</Text>
-        <Text style={[styles.headerText, styles.heartRate]}>Heart Rate</Text>
+        <Text style={styles.headerText}>Date/Time</Text>
+        <Text style={styles.headerText}>Blood Pressure</Text>
+        <Text style={styles.headerText}>Heart Rate</Text>
       </View>
     );
   }
@@ -44,12 +41,12 @@ export const MainPage = () => {
         <FlatList
           data={bloodPressureRecordings}
           renderItem={({item}) => <BloodPressureFlatListItem item={item} />}
-          keyExtractor={(item) => item.datetime}
+          keyExtractor={(item) => item.datetime.toISOString()}
         />
       </View>
       <View style={styles.footerContainer}>
         <TouchableOpacity style={[styles.footerButton, styles.copyJsonButton]} onPress={copyJsonToClipboard}>
-        <Ionicons name="clipboard" color="white" size={28}/>
+          <Ionicons name="clipboard" color="white" size={28}/>
         </TouchableOpacity>
         <TouchableOpacity style={[styles.footerButton, styles.addButton]} onPress={navigateToBloodPressureRecordingForm}>
           <Ionicons name="add" color="white" size={32}/>
