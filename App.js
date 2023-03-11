@@ -1,20 +1,25 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { Text, View } from 'react-native';
+
+import { MainPage, BloodPressureRecordingForm } from './components';
+import { BloodPressureRecordingProvider } from './data/BloodPressureRecordingProvider';
 
 export default function App() {
+  const Stack = createNativeStackNavigator();
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    
+    <BloodPressureRecordingProvider>
+      {/* <View>
+        <Text>Hello, testing testing</Text>
+      </View> */}
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName='MainPage'>
+          <Stack.Screen name="MainPage" component={MainPage}/>
+          <Stack.Screen name="BloodPressureRecordingForm" component={BloodPressureRecordingForm}/>
+        </Stack.Navigator>
+      </NavigationContainer>
+    </BloodPressureRecordingProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
