@@ -53,7 +53,6 @@ export const ImportAndExportPage: React.FC = () => {
     const jsonObjects = bloodPressureRecordings.map((it) => it.buildJsonObject())
     const jsonString = JSON.stringify(jsonObjects)
     await setStringToClipboardAsync(jsonString)
-    console.log("copied!")
   }
 
   return (

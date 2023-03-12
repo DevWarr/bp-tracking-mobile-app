@@ -6,7 +6,6 @@ import { BloodPressureRecordingDispatchContext } from '../data/BloodPressureReco
 import { BloodPressureDispatchAction, BloodPressureDispatchActionType } from '../data/BloodPressureDispatchAction';
 import { AppStackParamList } from '../App';
 import { useErrorString } from '../hooks/useErrorString';
-import { useTypewriterDisplay } from '../hooks/useTypewriterDisplay';
 
 export const BloodPressureRecordingForm = () => {
   const bloodPressureRecordingDispatch = useContext(BloodPressureRecordingDispatchContext)
@@ -16,7 +15,7 @@ export const BloodPressureRecordingForm = () => {
     navigation.navigate('MainPage');
   };
 
-  const [errorText, setErrorText] = useTypewriterDisplay();
+  const [errorText, setErrorText] = useErrorString();
   const [systolic, setSystolic] = useState('');
   const [diastolic, setDiastolic] = useState('');
   const [heartRate, setHeartRate] = useState('');
@@ -32,8 +31,8 @@ export const BloodPressureRecordingForm = () => {
   }, [])
 
   const handleAddNewBloodPressureRecording = () => {
-    if (!systolic || !diastolic || !heartRate) {
-      setErrorText("Please fill out first three fields.");
+    if (Number.isNaN(systolic) || Number.isNaN(diastolic) || Number.isNaN(heartRate)) {
+      setErrorText("Please fill out first three fields with valid numbers.");
       return;
     }
 
