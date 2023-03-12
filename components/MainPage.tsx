@@ -1,56 +1,36 @@
 import React, { useContext } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, } from 'react-native';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import Ionicons from "@expo/vector-icons/Ionicons"
-import { setStringAsync as setStringToClipboardAsync } from 'expo-clipboard';
 
 import { BloodPressureRecordingContext } from '../data/BloodPressureRecordingProvider';
-import { BloodPressureFlatListItem } from './BloodPressureFlatListItem';
 import { AppStackParamList } from '../App';
+import { BloodPressureFlatList } from './BloodPressureFlatList/BloodPressureFlatList';
 
 export const MainPage = () => {
   const bloodPressureRecordings = useContext(BloodPressureRecordingContext)
   const navigation = useNavigation<NavigationProp<AppStackParamList, "MainPage">>();
 
-  const navigateToBloodPressureRecordingForm = () => {
-    navigation.navigate('BloodPressureRecordingForm');
-  };
-
-  const copyJsonToClipboard = async () => {
-    const jsonObjects = bloodPressureRecordings.map((it) => it.buildJsonObject())
-    const jsonString = JSON.stringify(jsonObjects)
-    await setStringToClipboardAsync(jsonString)
-    Alert.prompt("Data copied to clipboard as base64 string")
-  }
-
-  const renderHeader = () => {
-    return (
-      <View style={styles.tableHeader}>
-        <Text style={styles.headerText}>Date/Time</Text>
-        <Text style={styles.headerText}>Blood Pressure</Text>
-        <Text style={styles.headerText}>Heart Rate</Text>
-      </View>
-    );
-  }
-
   return (
     <View style={styles.container}>
-      <View style={styles.table}>
-        {renderHeader()}
-        <FlatList
-          data={bloodPressureRecordings}
-          renderItem={({item}) => <BloodPressureFlatListItem item={item} />}
-          keyExtractor={(item) => item.datetime.toISOString()}
-        />
-      </View>
+
+      <BloodPressureFlatList bloodPressureRecordings={bloodPressureRecordings} />
+
       <View style={styles.footerContainer}>
-        <TouchableOpacity style={[styles.footerButton, styles.copyJsonButton]} onPress={copyJsonToClipboard}>
+        <TouchableOpacity
+          style={[styles.footerButton, styles.copyJsonButton]}
+          onPress={() => navigation.navigate('ImportAndExportPage')}
+        >
           <Ionicons name="clipboard" color="white" size={28}/>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.footerButton, styles.addButton]} onPress={navigateToBloodPressureRecordingForm}>
+        <TouchableOpacity
+          style={[styles.footerButton, styles.addButton]}
+          onPress={() => navigation.navigate('BloodPressureRecordingForm')}
+        >
           <Ionicons name="add" color="white" size={32}/>
         </TouchableOpacity>
       </View>
+
     </View>
   );
 }

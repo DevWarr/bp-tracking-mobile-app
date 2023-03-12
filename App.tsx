@@ -1,6 +1,8 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { SafeAreaView } from "react-native";
 import { BloodPressureRecordingForm } from "./components/BloodPressureRecordingForm";
+import { ImportAndExportPage } from "./components/ImportAndExportPage";
 import { MainPage } from "./components/MainPage";
 import { BloodPressureRecordingProvider } from "./data/BloodPressureRecordingProvider";
 
@@ -9,20 +11,24 @@ import { BloodPressureRecordingProvider } from "./data/BloodPressureRecordingPro
  */
 export type AppStackParamList = {
   MainPage: undefined,
-  BloodPressureRecordingForm: undefined
+  BloodPressureRecordingForm: undefined,
+  ImportAndExportPage: undefined,
 }
 
 export default function App() {
   const Stack = createNativeStackNavigator<AppStackParamList>();
 
   return (
-    <BloodPressureRecordingProvider>
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName='MainPage'>
-          <Stack.Screen name="MainPage" component={MainPage}/>
-          <Stack.Screen name="BloodPressureRecordingForm" component={BloodPressureRecordingForm}/>
-        </Stack.Navigator>
-      </NavigationContainer>
-    </BloodPressureRecordingProvider>
+    <SafeAreaView style={{flex: 1}}>
+      <BloodPressureRecordingProvider>
+        <NavigationContainer>
+          <Stack.Navigator initialRouteName='MainPage'>
+            <Stack.Screen name="MainPage" component={MainPage}/>
+            <Stack.Screen name="BloodPressureRecordingForm" component={BloodPressureRecordingForm}/>
+            <Stack.Screen name="ImportAndExportPage" component={ImportAndExportPage}/>
+          </Stack.Navigator>
+        </NavigationContainer>
+      </BloodPressureRecordingProvider>
+    </SafeAreaView>
   )
 }

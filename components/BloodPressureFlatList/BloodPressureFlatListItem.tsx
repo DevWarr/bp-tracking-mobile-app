@@ -1,7 +1,7 @@
 import { Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Ionicons from "@expo/vector-icons/Ionicons"
 import { useState } from 'react';
-import { BloodPressureRecording } from '../models/BloodPressureRecording';
+import { BloodPressureRecording } from '../../models/BloodPressureRecording';
 
 /**
  * Renders a single BloodPressure Recording as a row
@@ -20,7 +20,7 @@ export const BloodPressureFlatListItem = ({ item }: { item: BloodPressureRecordi
     </>
   )
 
-  const renderNotes = () => <Text style={styles.rowText}>{item.notes}</Text>
+  const renderNotes = () => <Text style={[styles.rowText, styles.notes]}>{item.notes}</Text>
 
   return (
     <TouchableOpacity
@@ -47,7 +47,9 @@ const styles = StyleSheet.create({
   },
   rowText: {
     fontSize: 16,
-    flex: 1,
     textAlign: 'center',
+  },
+  notes: {
+    flex: 1,
   },
 })

@@ -11,6 +11,16 @@ export interface IBloodPressureJsonObject {
   notes?: string;
 }
 
+export class BloodPressureMappingError extends Error {
+
+  constructor(
+    readonly message: string,
+    readonly inputJson: any
+  ) {
+      super(message);
+    }
+}
+
 export class BloodPressureRecording {
 
   readonly id: string;
@@ -30,6 +40,9 @@ export class BloodPressureRecording {
   }
 
   static buildFromJsonObject = (jsonObject: IBloodPressureJsonObject) => {
+    if (!validateImportedData(jsonObject)) {
+      throw new BloodPressureMappingError("Input is not valid Blood Pressure Recording", jsonObject)
+    }
     return new BloodPressureRecording(
       jsonObject.systolic,
       jsonObject.diastolic,
@@ -64,4 +77,24 @@ export class BloodPressureRecording {
 
     return `${dateString} ${AmOrPmString}`
   }
+}
+
+function validateImportedData(jsonData: any): jsonData is IBloodPressureJsonObject {
+  if (
+    typeof jsonData           !== "object" ||
+    !isValidDate(jsonData.dateTimeNumber)  ||
+    typeof jsonData.systolic  !== "number" ||
+    typeof jsonData.diastolic !== "number" ||
+    typeof jsonData.heartRate !== "number" ||
+    (jsonData.notes && typeof jsonData.notes != "string")
+  ) {
+    return false;
+  }
+
+  return true;
+}
+
+function isValidDate(dateTimeNumber: number): boolean {
+  const date = new Date(dateTimeNumber);
+  return !isNaN(date.getTime());
 }

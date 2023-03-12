@@ -5,6 +5,8 @@ import { BloodPressureRecording } from '../models/BloodPressureRecording';
 import { BloodPressureRecordingDispatchContext } from '../data/BloodPressureRecordingProvider';
 import { BloodPressureDispatchAction, BloodPressureDispatchActionType } from '../data/BloodPressureDispatchAction';
 import { AppStackParamList } from '../App';
+import { useErrorString } from '../hooks/useErrorString';
+import { useTypewriterDisplay } from '../hooks/useTypewriterDisplay';
 
 export const BloodPressureRecordingForm = () => {
   const bloodPressureRecordingDispatch = useContext(BloodPressureRecordingDispatchContext)
@@ -14,7 +16,7 @@ export const BloodPressureRecordingForm = () => {
     navigation.navigate('MainPage');
   };
 
-  const [errorText, setErrorText] = useState(' ');
+  const [errorText, setErrorText] = useTypewriterDisplay();
   const [systolic, setSystolic] = useState('');
   const [diastolic, setDiastolic] = useState('');
   const [heartRate, setHeartRate] = useState('');
@@ -24,13 +26,6 @@ export const BloodPressureRecordingForm = () => {
   const diastolicInputRef: React.MutableRefObject<TextInput | null> = useRef(null);
   const heartRateInputRef: React.MutableRefObject<TextInput | null> = useRef(null);
   const notesInputRef: React.MutableRefObject<TextInput | null> = useRef(null);
-
-  useEffect(() => {
-    if (!errorText.trim()) return;
-
-    setTimeout(() => setErrorText(' '), 2000)
-
-  }, [errorText])
 
   useEffect(() => {
     systolicInputRef.current?.focus()
@@ -47,7 +42,7 @@ export const BloodPressureRecordingForm = () => {
       new BloodPressureRecording(Number(systolic), Number(diastolic), Number(heartRate), notes)
     )
 
-    bloodPressureRecordingDispatch?.(dispatchAction);
+    bloodPressureRecordingDispatch(dispatchAction);
     navigateToMainPage();
   }
 
