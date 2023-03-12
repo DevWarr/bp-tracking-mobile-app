@@ -2,8 +2,7 @@ import React, { useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, Alert } from 'react-native';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import Ionicons from "@expo/vector-icons/Ionicons"
-import Clipboard from '@react-native-community/clipboard';
-import base64 from 'react-native-base64';
+import { setStringAsync as setStringToClipboardAsync } from 'expo-clipboard';
 
 import { BloodPressureRecordingContext } from '../data/BloodPressureRecordingProvider';
 import { BloodPressureFlatListItem } from './BloodPressureFlatListItem';
@@ -17,10 +16,10 @@ export const MainPage = () => {
     navigation.navigate('BloodPressureRecordingForm');
   };
 
-  const copyJsonToClipboard = () => {
-    const jsonString = JSON.stringify(bloodPressureRecordings)
-    const base64String = base64.encode(jsonString)
-    Clipboard.setString(base64String)
+  const copyJsonToClipboard = async () => {
+    const jsonObjects = bloodPressureRecordings.map((it) => it.buildJsonObject())
+    const jsonString = JSON.stringify(jsonObjects)
+    await setStringToClipboardAsync(jsonString)
     Alert.prompt("Data copied to clipboard as base64 string")
   }
 
