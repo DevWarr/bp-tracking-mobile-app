@@ -77,11 +77,7 @@ export const ImportAndExportPage: React.FC = () => {
 
         <View style={styles.importPreview}>
           <Text style={styles.subtitle}>Import Preview</Text>
-          {importData.length ? 
             <BloodPressureFlatList bloodPressureRecordings={importData} />
-            :
-            <Text style={styles.description}>(See a preview of your data before importing)</Text>
-          }
           <Button title="Save import data" disabled={!importData.length} onPress={handleSaveImportData} />
         </View>
 

@@ -14,7 +14,7 @@ export const MainPage = () => {
   return (
     <View style={styles.container}>
 
-      <BloodPressureFlatList bloodPressureRecordings={bloodPressureRecordings} />
+      <BloodPressureFlatList bloodPressureRecordings={bloodPressureRecordings} paddingBottom={120} />
 
       <View style={styles.footerContainer}>
         <TouchableOpacity
@@ -39,22 +39,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-  },
-  table: {
-    width: '100%',
-    marginBottom: 20,
-  },
-  tableHeader: {
-    backgroundColor: '#007AFF',
-    flexDirection: 'row',
-    padding: 10,
-  },
-  headerText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-    flex: 1,
-    textAlign: 'center',
   },
   footerContainer: {
     position: 'absolute',

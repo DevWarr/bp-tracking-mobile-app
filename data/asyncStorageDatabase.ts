@@ -9,7 +9,6 @@ export const saveData = async (data: BloodPressureRecording[]): Promise<void> =>
 
   const jsonData = data.map(bloodPressureRecording => bloodPressureRecording.buildJsonObject())
   const jsonString = JSON.stringify(jsonData)
-  console.log(jsonString)
 
   try {
     await AsyncStorage.setItem('bpData', jsonString);
@@ -31,7 +30,7 @@ export const loadData = async (): Promise<BloodPressureRecording[]> => {
         .parse(data)
         .map((bloodPressureJsonObject: IBloodPressureJsonObject) => BloodPressureRecording.buildFromJsonObject(bloodPressureJsonObject))
     } else {
-      console.log('No data found in AsyncStorage');
+      console.warn('No data found in AsyncStorage');
       return [];
     }
   } catch (error) {

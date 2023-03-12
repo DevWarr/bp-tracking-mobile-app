@@ -18,9 +18,10 @@ const bloodPressureRecordingReducer = (
   existingBloodPressureRecordings: BloodPressureRecording[],
   action: IBloodPressureDispatchAction
 ): BloodPressureRecording[] => {
-  console.log(action)
   if (action instanceof BloodPressureInitialDispatchAction) {
-    return action.bloodPressureRecordings
+    const newData = action.bloodPressureRecordings;
+    saveData(newData);
+    return newData;
   }
 
   const bloodPressureAction = action as BloodPressureDispatchAction
@@ -63,7 +64,6 @@ const bloodPressureRecordingReducer = (
  * React Context Provider for managing blood pressure recordings
  */
 export const BloodPressureRecordingProvider = ({ children }: {children: ReactNode}) => {
-  console.log("tee hee")
   const [bloodPressureRecordings, dispatch] = useReducer(bloodPressureRecordingReducer, [])
 
   const initializeData = async () => {

@@ -11,7 +11,6 @@ export const useErrorString = (): [string, T_SetErrorStringHook] => {
 
   const resetTimout = () => {
     if (!timeoutId) return;
-    console.log({timeoutId, from: "reset"})
     clearTimeout(timeoutId)
     setTimeoutId(null)
   }
@@ -20,14 +19,11 @@ export const useErrorString = (): [string, T_SetErrorStringHook] => {
     errorString: string,
     millisecondDelayForErrorToGoAway: number = 2000
   ) => {
-    console.log({timeoutId, from: "errorFound"})
     resetTimout()
     setErrorStringState(errorString)
-    console.log({timeoutId, from: "setString"})
 
     setTimeoutId(
       setTimeout(() => {
-        console.log({timeoutId, from: "setTimeout"})
         resetTimout()
         setErrorStringState("")
       }, millisecondDelayForErrorToGoAway)
