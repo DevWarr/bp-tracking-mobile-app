@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "google-sheet-input-app",
-    "slug": "google-sheet-input-app",
-    "version": "1.0.0",
+    "name": "blood-pressure-recording-app",
+    "slug": "blood-pressure-recording-app",
+    "version": "0.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
