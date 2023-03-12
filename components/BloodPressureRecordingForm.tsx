@@ -30,8 +30,17 @@ export const BloodPressureRecordingForm = () => {
     systolicInputRef.current?.focus()
   }, [])
 
+  const isValidNumber = (inputString: string): boolean => {
+    const numberValue = Number(inputString) 
+    return (
+      !isNaN(numberValue) &&
+      !!numberValue &&
+      Number.isSafeInteger(numberValue)
+    )
+  }
+
   const handleAddNewBloodPressureRecording = () => {
-    if (Number.isNaN(systolic) || Number.isNaN(diastolic) || Number.isNaN(heartRate)) {
+    if (!isValidNumber(systolic) || !isValidNumber(diastolic) || !isValidNumber(heartRate)) {
       setErrorText("Please fill out first three fields with valid numbers.");
       return;
     }
