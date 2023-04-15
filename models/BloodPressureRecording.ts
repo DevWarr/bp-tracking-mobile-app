@@ -3,98 +3,53 @@
 import 'react-native-get-random-values';
 import { v4 as generateV4UUID } from 'uuid';
 
-export interface IBloodPressureJsonObject {
-  dateTimeNumber: number;
+export enum TimeOfDay {
+  MORNING = 'AM',
+  EVENING = 'PM'
+}
+
+/**
+ * Audit Fields for a model.
+ * 
+ * Fields in this interface are readonly,
+ * so any updates to the audit fields will require you to create a new AuditField.
+*/
+export class AuditFields {
+  constructor(
+    /** When the model was created. Should be a valid ISO string in UTC time. */
+    public createdDateTime: string = new Date().toISOString(),
+    /** When the model was last updated. Should be a valid ISO string in UTC time. */
+    public lastUpdatedDateTime: string = new Date().toISOString(),
+  ) {}
+}
+
+
+export class BloodPressureRecording {
+
+  /** unique ID */
+  readonly id: string;
+  /** Date of the recording. This should be in "YYYY-MM-DD" format. */
+  date: string;
+  /** Whether the recording was taken in the morning or evening */
+  timeOfDay: TimeOfDay
   systolic: number;
   diastolic: number;
   heartRate: number;
   notes?: string;
-}
+  auditFields: AuditFields;
 
-export class BloodPressureMappingError extends Error {
-
-  constructor(
-    readonly message: string,
-    readonly inputJson: any
-  ) {
-      super(message);
-    }
-}
-
-export class BloodPressureRecording {
-
-  readonly id: string;
-  readonly datetime: Date;
-  readonly systolic: number;
-  readonly diastolic: number;
-  readonly heartRate: number;
-  readonly notes?: string;
-
-  constructor(systolic: number, diastolic: number, heartRate: number, notes?: string, dateTimeNumber?: number) {
-    this.id = generateV4UUID();
-    this.datetime = dateTimeNumber ? new Date(dateTimeNumber) : new Date()
+  constructor(date: string, timeOfDay: TimeOfDay, systolic: number, diastolic: number, heartRate: number, notes?: string, auditFields?: AuditFields) {
+    this.id = generateV4UUID()
+    this.date = date
+    this.timeOfDay = timeOfDay
     this.systolic = systolic
     this.diastolic = diastolic
     this.heartRate = heartRate
     this.notes = notes ? (notes.trim() || undefined) : undefined
+    this.auditFields = auditFields ? auditFields : new AuditFields()
   }
 
-  static buildFromJsonObject = (jsonObject: IBloodPressureJsonObject) => {
-    if (!validateImportedData(jsonObject)) {
-      throw new BloodPressureMappingError("Input is not valid Blood Pressure Recording", jsonObject)
-    }
-    return new BloodPressureRecording(
-      jsonObject.systolic,
-      jsonObject.diastolic,
-      jsonObject.heartRate,
-      jsonObject.notes,
-      jsonObject.dateTimeNumber,
-    )
+  get dateInfo(): string {
+    return `${this.date} ${this.timeOfDay}`
   }
-
-  buildJsonObject = (): IBloodPressureJsonObject => {
-    return {
-      dateTimeNumber: this.datetime.getTime(),
-      systolic: this.systolic,
-      diastolic: this.diastolic,
-      heartRate: this.heartRate,
-      notes: this.notes,
-    }
-  }
-
-  getDateInfo = (): string => {
-    // Make a copy of the date, just in case we make changes to the object for printing
-    const dateToPrint = new Date(this.datetime.getTime());
-    // If we have a time from midnight to 6AM, that's technically "PM" of the previous day
-    if (this.datetime.getHours() < 6) dateToPrint.setDate(this.datetime.getDate() - 1)
-
-    // AM recording = between 0600 and 1800
-    // PM recording = beteen 1600 and 0600 of the next day
-    const isAM = (6 < dateToPrint.getHours() && dateToPrint.getHours() < 18)
-
-    const dateString = dateToPrint.toISOString().substring(0, 10)
-    const AmOrPmString = isAM ? "AM" : "PM"
-
-    return `${dateString} ${AmOrPmString}`
-  }
-}
-
-function validateImportedData(jsonData: any): jsonData is IBloodPressureJsonObject {
-  if (
-    typeof jsonData           !== "object" ||
-    !isValidDate(jsonData.dateTimeNumber)  ||
-    typeof jsonData.systolic  !== "number" ||
-    typeof jsonData.diastolic !== "number" ||
-    typeof jsonData.heartRate !== "number" ||
-    (jsonData.notes && typeof jsonData.notes != "string")
-  ) {
-    return false;
-  }
-
-  return true;
-}
-
-function isValidDate(dateTimeNumber: number): boolean {
-  const date = new Date(dateTimeNumber);
-  return !isNaN(date.getTime());
 }

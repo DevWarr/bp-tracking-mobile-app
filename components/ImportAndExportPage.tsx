@@ -5,12 +5,13 @@ import {
   getStringAsync as getStringFromClipboardAsync,
 } from 'expo-clipboard';
 import { BloodPressureRecordingContext, BloodPressureRecordingDispatchContext } from '../data/BloodPressureRecordingProvider';
-import { BloodPressureRecording, IBloodPressureJsonObject } from '../models/BloodPressureRecording';
+import { BloodPressureRecording } from '../models/BloodPressureRecording';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { AppStackParamList } from '../App';
 import { BloodPressureFlatList } from './BloodPressureFlatList/BloodPressureFlatList';
 import { BloodPressureInitialDispatchAction } from '../data/BloodPressureDispatchAction';
 import { useErrorString } from '../hooks/useErrorString';
+import BloodPressureRecordingJsonMapper from '../models/BloodPressureRecordingJsonMapper';
 
 export const ImportAndExportPage: React.FC = () => {
   const bloodPressureRecordings = useContext(BloodPressureRecordingContext)
@@ -23,10 +24,10 @@ export const ImportAndExportPage: React.FC = () => {
   const handleImportData = async () => {
     const stringData = await getStringFromClipboardAsync();
     try {
-      const jsonData = JSON.parse(stringData) as IBloodPressureJsonObject[];
-      const bloodPressureRecordings = jsonData.map(BloodPressureRecording.buildFromJsonObject)
+      const bloodPressureRecordings = BloodPressureRecordingJsonMapper.buildBloodPressureRecordingListFromJsonString(stringData)
       setImportData(bloodPressureRecordings);
     } catch (error) {
+      console.error(error)
       setImportError("Invalid input. Are you sure you have valid data copied?")
     }
   };
@@ -50,8 +51,7 @@ export const ImportAndExportPage: React.FC = () => {
   }
 
   const handleExportData = async () => {
-    const jsonObjects = bloodPressureRecordings.map((it) => it.buildJsonObject())
-    const jsonString = JSON.stringify(jsonObjects)
+    const jsonString = BloodPressureRecordingJsonMapper.buildJsonStringFromBloodPressureRecordingList(bloodPressureRecordings)
     await setStringToClipboardAsync(jsonString)
   }
 

@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { IBloodPressureJsonObject, BloodPressureRecording, BloodPressureMappingError } from '../models/BloodPressureRecording';
+import { BloodPressureRecording } from '../models/BloodPressureRecording';
+import BloodPressureRecordingJsonMapper, { IBloodPressureJsonObject, BloodPressureMappingError } from '../models/BloodPressureRecordingJsonMapper';
 
 /**
  * Save data to AsyncStorage
@@ -7,9 +8,7 @@ import { IBloodPressureJsonObject, BloodPressureRecording, BloodPressureMappingE
 export const saveData = async (data: BloodPressureRecording[]): Promise<void> => {
   if (!data) return;
 
-  const jsonData = data.map(bloodPressureRecording => bloodPressureRecording.buildJsonObject())
-  const jsonString = JSON.stringify(jsonData)
-
+  const jsonString = BloodPressureRecordingJsonMapper.buildJsonStringFromBloodPressureRecordingList(data)
   try {
     await AsyncStorage.setItem('bpData', jsonString);
     console.log('Data saved to AsyncStorage');
@@ -24,24 +23,24 @@ export const saveData = async (data: BloodPressureRecording[]): Promise<void> =>
 export const loadData = async (): Promise<BloodPressureRecording[]> => {
   try {
     const data = await AsyncStorage.getItem('bpData');
-    if (data !== null) {
-      console.log('Data loaded from AsyncStorage');
-      return JSON
-        .parse(data)
-        .map((bloodPressureJsonObject: IBloodPressureJsonObject) => BloodPressureRecording.buildFromJsonObject(bloodPressureJsonObject))
-    } else {
+
+    if (data == null) {
       console.warn('No data found in AsyncStorage');
       return [];
     }
+
+    console.log('Data loaded from AsyncStorage');
+    return BloodPressureRecordingJsonMapper.buildBloodPressureRecordingListFromJsonString(data)
+
   } catch (error) {
     if (error instanceof BloodPressureMappingError) {
       console.error({
-        error: 'Error mapping JSON data',
-        errorMessage: error.message,
-        errorInputJson: 
-        error.inputJson
+        error:          'Error mapping JSON data',
+        errorMessage:   error.message,
+        errorInputJson: error.inputJson
       });
     }
+
     console.error('Error loading data from AsyncStorage:', error);
     return [];
   }
