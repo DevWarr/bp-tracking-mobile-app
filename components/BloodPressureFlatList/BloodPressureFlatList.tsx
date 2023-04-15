@@ -33,7 +33,7 @@ export const BloodPressureFlatList = ({ bloodPressureRecordings, paddingBottom =
         style={{paddingBottom: 100}}
         data={bloodPressureRecordings}
         renderItem={renderItem}
-        keyExtractor={(item) => item.datetime.toISOString()}
+        keyExtractor={(item) => `${item.dateInfo}${item.id}`}
         ListFooterComponent={<View style={{paddingBottom: paddingBottom}} />}
         ListEmptyComponent={<EmptyListComponent />}
       />

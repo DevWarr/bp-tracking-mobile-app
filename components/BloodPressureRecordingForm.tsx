@@ -6,6 +6,7 @@ import { BloodPressureRecordingDispatchContext } from '../data/BloodPressureReco
 import { BloodPressureDispatchAction, BloodPressureDispatchActionType } from '../data/BloodPressureDispatchAction';
 import { AppStackParamList } from '../App';
 import { useErrorString } from '../hooks/useErrorString';
+import { convertDateToDateStringAndTimeOfDay } from '../models/conversions';
 
 export const BloodPressureRecordingForm = () => {
   const bloodPressureRecordingDispatch = useContext(BloodPressureRecordingDispatchContext)
@@ -15,16 +16,18 @@ export const BloodPressureRecordingForm = () => {
     navigation.navigate('MainPage');
   };
 
-  const [errorText, setErrorText] = useErrorString();
-  const [systolic, setSystolic] = useState('');
-  const [diastolic, setDiastolic] = useState('');
-  const [heartRate, setHeartRate] = useState('');
-  const [notes, setNotes] = useState('');
+  const [errorText,  setErrorText ] = useErrorString();
+  const [dateString, setDateString] = useState(convertDateToDateStringAndTimeOfDay(new Date()).dateString);
+  const [isAmOrPm,   setIsAmOrPm  ] = useState('AM');
+  const [systolic,   setSystolic  ] = useState('');
+  const [diastolic,  setDiastolic ] = useState('');
+  const [heartRate,  setHeartRate ] = useState('');
+  const [notes,      setNotes     ] = useState('');
 
-  const systolicInputRef: React.MutableRefObject<TextInput | null> = useRef(null);
+  const systolicInputRef:  React.MutableRefObject<TextInput | null> = useRef(null);
   const diastolicInputRef: React.MutableRefObject<TextInput | null> = useRef(null);
   const heartRateInputRef: React.MutableRefObject<TextInput | null> = useRef(null);
-  const notesInputRef: React.MutableRefObject<TextInput | null> = useRef(null);
+  const notesInputRef:     React.MutableRefObject<TextInput | null> = useRef(null);
 
   useEffect(() => {
     systolicInputRef.current?.focus()
@@ -45,9 +48,19 @@ export const BloodPressureRecordingForm = () => {
       return;
     }
 
+    const {dateString, timeOfDay} = convertDateToDateStringAndTimeOfDay(new Date())
+    const newBloodPressureRecording = new BloodPressureRecording(
+      dateString,
+      timeOfDay,
+      Number(systolic),
+      Number(diastolic),
+      Number(heartRate),
+      notes
+    )
+
     const dispatchAction = new BloodPressureDispatchAction(
       BloodPressureDispatchActionType.NEW,
-      new BloodPressureRecording(Number(systolic), Number(diastolic), Number(heartRate), notes)
+      newBloodPressureRecording
     )
 
     bloodPressureRecordingDispatch(dispatchAction);

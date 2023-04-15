@@ -12,7 +12,7 @@ export const BloodPressureFlatListItem = ({ item }: { item: BloodPressureRecordi
 
   const renderBloodPressureInfo = () => (
     <>
-      <Text style={styles.rowText}>{item.getDateInfo()}</Text>
+      <Text style={styles.rowText}>{item.dateInfo}</Text>
       <Text style={styles.rowText}>
         {item.systolic} / {item.diastolic}
       </Text>
