@@ -7,6 +7,7 @@ import { BloodPressureDispatchAction, BloodPressureDispatchActionType } from '..
 import { AppStackParamList } from '../App';
 import { useErrorString } from '../hooks/useErrorString';
 import { convertDateToDateStringAndTimeOfDay } from '../models/conversions';
+import { useNumberState } from '../hooks/useNumberState';
 
 export const BloodPressureRecordingForm = () => {
   const bloodPressureRecordingDispatch = useContext(BloodPressureRecordingDispatchContext)
@@ -17,11 +18,11 @@ export const BloodPressureRecordingForm = () => {
   };
 
   const [errorText,  setErrorText ] = useErrorString();
-  const [dateString, setDateString] = useState(convertDateToDateStringAndTimeOfDay(new Date()).dateString);
+  const [dateOfRecording, setDateOfRecording] = useState(convertDateToDateStringAndTimeOfDay(new Date()).dateString);
   const [isAmOrPm,   setIsAmOrPm  ] = useState('AM');
-  const [systolic,   setSystolic  ] = useState('');
-  const [diastolic,  setDiastolic ] = useState('');
-  const [heartRate,  setHeartRate ] = useState('');
+  const [systolic,   setSystolic  ] = useNumberState('');
+  const [diastolic,  setDiastolic ] = useNumberState('');
+  const [heartRate,  setHeartRate ] = useNumberState('');
   const [notes,      setNotes     ] = useState('');
 
   const systolicInputRef:  React.MutableRefObject<TextInput | null> = useRef(null);
@@ -34,7 +35,7 @@ export const BloodPressureRecordingForm = () => {
   }, [])
 
   const isValidNumber = (inputString: string): boolean => {
-    const numberValue = Number(inputString) 
+    const numberValue = Number(inputString)
     return (
       !isNaN(numberValue) &&
       !!numberValue &&
@@ -76,7 +77,7 @@ export const BloodPressureRecordingForm = () => {
         placeholder="Systolic"
         keyboardType="numeric"
         returnKeyType="next"
-        onChangeText={(text: string) => setSystolic(text)}
+        onChangeText={setSystolic}
         value={systolic}
         ref={systolicInputRef}
         onSubmitEditing={() => {
@@ -88,7 +89,7 @@ export const BloodPressureRecordingForm = () => {
         placeholder="Diastolic"
         keyboardType="numeric"
         returnKeyType="next"
-        onChangeText={(text: string) => setDiastolic(text)}
+        onChangeText={setDiastolic}
         value={diastolic}
         ref={diastolicInputRef}
         onSubmitEditing={() => {
@@ -100,7 +101,7 @@ export const BloodPressureRecordingForm = () => {
         placeholder="Heart rate"
         keyboardType="numeric"
         returnKeyType="next"
-        onChangeText={(text: string) => setHeartRate(text)}
+        onChangeText={setHeartRate}
         value={heartRate}
         ref={heartRateInputRef}
         onSubmitEditing={() => {
@@ -112,7 +113,8 @@ export const BloodPressureRecordingForm = () => {
         placeholder="Notes (optional)"
         multiline
         numberOfLines={4}
-        onChangeText={(text: string) => setNotes(text)}
+        ref={notesInputRef}
+        onChangeText={setNotes}
         value={notes}
       />
       <TouchableOpacity style={styles.addButton} onPress={handleAddNewBloodPressureRecording}>

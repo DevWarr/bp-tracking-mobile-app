@@ -15,11 +15,11 @@ export interface IBloodPressureJsonObject {
 
 /**
  * Transforms a JSON Object from old schema to new schema.
- * 
+ *
  * Old Schema: dateTimeNumber field had a date that was used to calculate the datetime of the BP recording.
- * 
+ *
  * New Schema: there's a dateString and timeOfDay field that show the datetime of the BP Recording.
- * 
+ *
  * @param jsonObject JSON Object to modify
  * @returns JSON Object with new format, if transformation was successful
  */
@@ -38,11 +38,11 @@ const transformOldFormatToNewFormat = (jsonObject: any): any => {
 
 /**
  * Builds a list of BloodPressureRecordings from an input JSON string.
- * 
+ *
  * Throws an error if there are issues parsing the JSON,
  * or if any of the objects within the JSON are not valid BloodPressureRecording objects.
- * 
- * @param jsonString 
+ *
+ * @param jsonString
  * @returns List of imported Blood Pressure recordings, all with new audit fields
  */
 const buildBloodPressureRecordingListFromJsonString = (jsonString: string): BloodPressureRecording[] => {

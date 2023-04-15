@@ -34,7 +34,7 @@ export class BloodPressureRecordingJsonValidationError {
 
 /**
  * Validates whether a list of JSON objects are a valid BloodPressureRecording object.
- * 
+ *
  * @param jsonObjectList List of potential JSON Objects
  * @returns List of validation errors. If the list is empty, no validation errors were found '' '
  */
@@ -48,7 +48,7 @@ const validateJsonObjects = (jsonObjectList: any[]): BloodPressureRecordingJsonV
 
 /**
  * Validates whether a single JSON Object is a valid BloodPressureRecording object.
- * 
+ *
  * @param jsonObject object to validate
  * @returns validation error. If `null` is returned, there are no validation errors
  */

@@ -24,10 +24,9 @@ export const ImportAndExportPage: React.FC = () => {
   const handleImportData = async () => {
     const stringData = await getStringFromClipboardAsync();
     try {
-      const bloodPressureRecordings = BloodPressureRecordingJsonMapper.buildBloodPressureRecordingListFromJsonString(stringData)
-      setImportData(bloodPressureRecordings);
+      const bloodPressureRecordingsFromImport = BloodPressureRecordingJsonMapper.buildBloodPressureRecordingListFromJsonString(stringData)
+      setImportData(bloodPressureRecordingsFromImport);
     } catch (error) {
-      console.error(error)
       setImportError("Invalid input. Are you sure you have valid data copied?")
     }
   };

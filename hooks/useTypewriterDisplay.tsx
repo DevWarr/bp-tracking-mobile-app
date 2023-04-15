@@ -15,7 +15,7 @@ export const useTypewriterDisplay = (): [string, T_SetTypewriterString] => {
   const resetInterval = () => {
     if (!intervalId) return;
     clearTimeout(intervalId)
-    setIntervalId(null)
+    setIntervalId(null
   }
 
   const typewriterNext = () => {
@@ -26,11 +26,11 @@ export const useTypewriterDisplay = (): [string, T_SetTypewriterString] => {
   }
 
   const setTypewriterString = (
-    initialTypewriterString: string,
+    stringToTypewright: string,
     millisecondDelayPerCharacterTyped: number = 35
   ) => {
     resetInterval()
-    setInitialTypewriterString(initialTypewriterString)
+    setInitialTypewriterString(stringToTypewright)
     setMillisDelay(millisecondDelayPerCharacterTyped)
     setTypewriterStringState("")
     setStringIndex(0)

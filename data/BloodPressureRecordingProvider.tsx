@@ -1,7 +1,7 @@
 import React, { Context, createContext, ReactNode, useEffect, useReducer } from "react";
 import { BloodPressureRecording } from "../models/BloodPressureRecording";
 import { loadData, saveData } from "./asyncStorageDatabase";
-import { 
+import {
   BloodPressureDispatchAction,
   BloodPressureDispatchActionType,
   BloodPressureInitialDispatchAction,
@@ -50,7 +50,7 @@ const bloodPressureRecordingReducer = (
     }
 
     case BloodPressureDispatchActionType.DELETED: {
-      const newData = existingBloodPressureRecordings.filter(singleBloodPressureRecording => 
+      const newData = existingBloodPressureRecordings.filter(singleBloodPressureRecording =>
         singleBloodPressureRecording.id !== bloodPressureAction.bloodPressureRecording.id
       );
       saveData(newData);
