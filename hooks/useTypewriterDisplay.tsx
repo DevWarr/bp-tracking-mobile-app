@@ -15,7 +15,7 @@ export const useTypewriterDisplay = (): [string, T_SetTypewriterString] => {
   const resetInterval = () => {
     if (!intervalId) return;
     clearTimeout(intervalId)
-    setIntervalId(null
+    setIntervalId(null)
   }
 
   const typewriterNext = () => {

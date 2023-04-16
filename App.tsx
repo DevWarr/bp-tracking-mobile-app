@@ -1,7 +1,7 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native";
-import { BloodPressureRecordingForm } from "./components/BloodPressureRecordingForm";
+import { BloodPressureRecordingForm } from "./components/BloodPressureRecordingForm/BloodPressureRecordingForm";
 import { ImportAndExportPage } from "./components/ImportAndExportPage";
 import { MainPage } from "./components/MainPage";
 import { BloodPressureRecordingProvider } from "./data/BloodPressureRecordingProvider";

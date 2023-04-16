@@ -1,16 +1,16 @@
 import { useState, useRef, useContext, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { BloodPressureRecording } from '../models/BloodPressureRecording';
-import { BloodPressureRecordingDispatchContext } from '../data/BloodPressureRecordingProvider';
-import { BloodPressureDispatchAction, BloodPressureDispatchActionType } from '../data/BloodPressureDispatchAction';
-import { AppStackParamList } from '../App';
-import { useErrorString } from '../hooks/useErrorString';
-import { convertDateToDateStringAndTimeOfDay, formatDateAsYYYYMMDD, getTimeOfDayFromDate } from '../models/conversions';
-import { useNumberState } from '../hooks/useNumberState';
+import { BloodPressureRecording } from '../../models/BloodPressureRecording';
+import { BloodPressureRecordingDispatchContext } from '../../data/BloodPressureRecordingProvider';
+import { BloodPressureDispatchAction, BloodPressureDispatchActionType } from '../../data/BloodPressureDispatchAction';
+import { AppStackParamList } from '../../App';
+import { useErrorString } from '../../hooks/useErrorString';
+import { convertDateToDateStringAndTimeOfDay, formatDateAsYYYYMMDD, getTimeOfDayFromDate } from '../../models/conversions';
+import { useNumberState } from '../../hooks/useNumberState';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import RNPickerSelect from 'react-native-picker-select';
-import { TimeOfDay } from '../models/BloodPressureRecording';
+import { TimeOfDay } from '../../models/BloodPressureRecording';
+import { Picker } from '@react-native-picker/picker';
 
 export const BloodPressureRecordingForm = () => {
   const bloodPressureRecordingDispatch = useContext(BloodPressureRecordingDispatchContext)
@@ -100,14 +100,10 @@ export const BloodPressureRecordingForm = () => {
           }}
           onCancel={() => setIsDateModalOpen(false)}
         />
-        <RNPickerSelect
-          onValueChange={(value: TimeOfDay) => console.log(value)}
-          value={timeOfDayOfRecording}
-          items={[
-              { label: TimeOfDay.MORNING, value: TimeOfDay.MORNING },
-              { label: TimeOfDay.EVENING, value: TimeOfDay.EVENING },
-          ]}
-        />
+        <Picker selectedValue={timeOfDayOfRecording} onValueChange={setTimeOfDayOfRecording} >
+          <Picker.Item label={TimeOfDay.MORNING} value={TimeOfDay.MORNING} />
+          <Picker.Item label={TimeOfDay.EVENING} value={TimeOfDay.EVENING} />
+        </Picker>
       </View>
       <TextInput
         style={styles.input}
