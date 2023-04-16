@@ -1,5 +1,3 @@
-import { TimeOfDay } from "./BloodPressureRecording";
-
 export const convertDateToDateStringAndTimeOfDay = (date: Date) => {
     // Make a copy of the date, just in case we make changes to the object for printing
     const dateToPrint = new Date(date.getTime());
@@ -9,7 +7,7 @@ export const convertDateToDateStringAndTimeOfDay = (date: Date) => {
 
     // AM recording = between 0600 and 1800
     // PM recording = beteen 1600 and 0600 of the next day
-    const timeOfDay = (6 < dateToPrint.getHours() && dateToPrint.getHours() < 18) ? TimeOfDay.MORNING : TimeOfDay.EVENING
+    const timeOfDay = (6 < dateToPrint.getHours() && dateToPrint.getHours() < 18) ? "AM" : "PM"
 
     return {dateString, timeOfDay}
 }
@@ -29,4 +27,4 @@ export const formatDateAsYYYYMMDD = (date: Date): string => {
         .split("T")[0];
 }
 
-export const getTimeOfDayFromDate = (date: Date) => date.getHours() < 12 ? TimeOfDay.MORNING : TimeOfDay.EVENING
+export const getTimeOfDayFromDate = (date: Date) => date.getHours() < 12 ? "AM" : "PM"

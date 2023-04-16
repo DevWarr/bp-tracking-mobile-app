@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BloodPressureRecording } from '../models/BloodPressureRecording';
-import BloodPressureRecordingJsonMapper, { IBloodPressureJsonObject, BloodPressureMappingError } from '../models/BloodPressureRecordingJsonMapper';
+import BloodPressureRecordingJsonMapper from '../models/BloodPressureRecordingJsonMapper';
 
 /**
  * Save data to AsyncStorage
@@ -38,15 +38,6 @@ export const loadData = async (): Promise<BloodPressureRecording[]> => {
     return BloodPressureRecordingJsonMapper.buildBloodPressureRecordingListFromJsonString(data)
 
   } catch (error) {
-    if (error instanceof BloodPressureMappingError) {
-      // tslint:disable-next-line:no-console
-      console.error({
-        error:          'Error mapping JSON data',
-        errorMessage:   error.message,
-        errorInputJson: error.inputJson
-      });
-    }
-
     // tslint:disable-next-line:no-console
     console.error('Error loading data from AsyncStorage:', error);
     return [];

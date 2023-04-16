@@ -6,11 +6,9 @@ import { BloodPressureRecordingDispatchContext } from '../../data/BloodPressureR
 import { BloodPressureDispatchAction, BloodPressureDispatchActionType } from '../../data/BloodPressureDispatchAction';
 import { AppStackParamList } from '../../App';
 import { useErrorString } from '../../hooks/useErrorString';
-import { convertDateToDateStringAndTimeOfDay, formatDateAsYYYYMMDD, getTimeOfDayFromDate } from '../../models/conversions';
+import { formatDateAsYYYYMMDD, getTimeOfDayFromDate } from '../../models/conversions';
 import { useNumberState } from '../../hooks/useNumberState';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import { TimeOfDay } from '../../models/BloodPressureRecording';
-import { Picker } from '@react-native-picker/picker';
 
 export const BloodPressureRecordingForm = () => {
   const bloodPressureRecordingDispatch = useContext(BloodPressureRecordingDispatchContext)
@@ -22,7 +20,6 @@ export const BloodPressureRecordingForm = () => {
 
   const [dateOfRecording,      setDateOfRecording     ] = useState(new Date());
   const [isDateModalOpen,      setIsDateModalOpen     ] = useState<boolean>(false);
-  const [timeOfDayOfRecording, setTimeOfDayOfRecording] = useState<TimeOfDay>(getTimeOfDayFromDate(new Date()));
 
   const [systolic,   setSystolic  ] = useNumberState('');
   const [diastolic,  setDiastolic ] = useNumberState('');
@@ -54,10 +51,8 @@ export const BloodPressureRecordingForm = () => {
       return;
     }
 
-    const {dateString, timeOfDay} = convertDateToDateStringAndTimeOfDay(new Date())
     const newBloodPressureRecording = new BloodPressureRecording(
-      dateString,
-      timeOfDay,
+      new Date(),
       Number(systolic),
       Number(diastolic),
       Number(heartRate),
@@ -100,10 +95,6 @@ export const BloodPressureRecordingForm = () => {
           }}
           onCancel={() => setIsDateModalOpen(false)}
         />
-        <Picker selectedValue={timeOfDayOfRecording} onValueChange={setTimeOfDayOfRecording} >
-          <Picker.Item label={TimeOfDay.MORNING} value={TimeOfDay.MORNING} />
-          <Picker.Item label={TimeOfDay.EVENING} value={TimeOfDay.EVENING} />
-        </Picker>
       </View>
       <TextInput
         style={styles.input}
