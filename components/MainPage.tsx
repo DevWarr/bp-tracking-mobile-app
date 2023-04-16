@@ -3,18 +3,16 @@ import { View, Text, StyleSheet, TouchableOpacity, } from 'react-native';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import Ionicons from "@expo/vector-icons/Ionicons"
 
-import { BloodPressureRecordingContext } from '../data/BloodPressureRecordingProvider';
 import { AppStackParamList } from '../App';
 import { BloodPressureFlatList } from './BloodPressureFlatList/BloodPressureFlatList';
 
 export const MainPage = () => {
-  const bloodPressureRecordings = useContext(BloodPressureRecordingContext)
   const navigation = useNavigation<NavigationProp<AppStackParamList, "MainPage">>();
 
   return (
     <View style={styles.container}>
 
-      <BloodPressureFlatList bloodPressureRecordings={bloodPressureRecordings} paddingBottom={120} />
+      <BloodPressureFlatList paddingBottom={120} navigation={navigation}/>
 
       <View style={styles.footerContainer}>
         <TouchableOpacity

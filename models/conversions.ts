@@ -13,7 +13,7 @@ export const convertDateToDateStringAndTimeOfDay = (date: Date) => {
 }
 
 /** 
- * Formats a Date object with a YYYY-MM-DD format.
+ * Creates a string of the given date with YYYY-MM-DD format.
  * 
  * How it works:
  *
@@ -27,4 +27,21 @@ export const formatDateAsYYYYMMDD = (date: Date): string => {
         .split("T")[0];
 }
 
-export const getTimeOfDayFromDate = (date: Date) => date.getHours() < 12 ? "AM" : "PM"
+/** Creates an "AM" or "PM" string for the given Date object */
+export const formatTimeOfDayFromDate = (date: Date) => date.getHours() < 12 ? "AM" : "PM"
+
+/**
+ * Creates a string of the time of the given date with HH:mm format
+ * 
+ * Can format time in 24hr time, or 12hr time.
+ */
+export const formatTimeFromDate = (date: Date, is24hrTime: boolean = true): string => {
+    if (is24hrTime) {
+        return `${date.getHours()}:${date.getMinutes()}`
+    }
+
+    const timeIn12Hours = (date.getHours() === 0) ? 12 : date.getHours() % 12
+    const timeOfDay = formatTimeOfDayFromDate(date)
+
+    return `${timeIn12Hours}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')} ${timeOfDay}`
+}

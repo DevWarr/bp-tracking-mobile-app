@@ -1,30 +1,42 @@
 import { useState, useRef, useContext, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { NavigationProp, Route, useNavigation } from '@react-navigation/native';
 import { BloodPressureRecording } from '../../models/BloodPressureRecording';
-import { BloodPressureRecordingDispatchContext } from '../../data/BloodPressureRecordingProvider';
+import { BloodPressureRecordingContext, BloodPressureRecordingDispatchContext } from '../../data/BloodPressureRecordingProvider';
 import { BloodPressureDispatchAction, BloodPressureDispatchActionType } from '../../data/BloodPressureDispatchAction';
 import { AppStackParamList } from '../../App';
 import { useErrorString } from '../../hooks/useErrorString';
-import { formatDateAsYYYYMMDD, getTimeOfDayFromDate } from '../../models/conversions';
 import { useNumberState } from '../../hooks/useNumberState';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import { useIncrementingDateTime } from '../../hooks/useIncrementingDate';
+import { formatDateAsYYYYMMDD, formatTimeFromDate } from '../../models/conversions';
+import { selectBloodPressureToEdit } from '../../hooks/selectBloodPressureToEdit';
 
-export const BloodPressureRecordingForm = () => {
+export interface IBloodPressureRecordingFormRouteParams {
+  bloodPressureRecordingIdToEdit?: string
+}
+
+interface IBloodPressureRecordingFormProps {
+  route?: Route<"BloodPressureRecordingForm", IBloodPressureRecordingFormRouteParams>
+}
+
+export const BloodPressureRecordingForm = ({ route }: IBloodPressureRecordingFormProps) => {
+
+  const {isEditing, bloodPressureRecordingToEdit} = selectBloodPressureToEdit(route?.params?.bloodPressureRecordingIdToEdit)
   const bloodPressureRecordingDispatch = useContext(BloodPressureRecordingDispatchContext)
-  const navigation = useNavigation<NavigationProp<AppStackParamList, "BloodPressureRecordingForm">>();
 
+  const navigation = useNavigation<NavigationProp<AppStackParamList, "BloodPressureRecordingForm">>();
   const navigateToMainPage = () => {
     navigation.navigate('MainPage');
   };
 
-  const [dateOfRecording,      setDateOfRecording     ] = useState(new Date());
-  const [isDateModalOpen,      setIsDateModalOpen     ] = useState<boolean>(false);
+  const [dateOfRecording,  setDateOfRecording, stopIncrementingDateTime] = useIncrementingDateTime(isEditing ? bloodPressureRecordingToEdit.date : new Date(), isEditing);
+  const [isDateTimeModalOpen, setIsDateTimeModalOpen] = useState<boolean>(false);
 
-  const [systolic,   setSystolic  ] = useNumberState('');
-  const [diastolic,  setDiastolic ] = useNumberState('');
-  const [heartRate,  setHeartRate ] = useNumberState('');
-  const [notes,      setNotes     ] = useState('');
+  const [systolic,   setSystolic  ] = useNumberState(isEditing ? bloodPressureRecordingToEdit.systolic.toString() : '');
+  const [diastolic,  setDiastolic ] = useNumberState(isEditing ? bloodPressureRecordingToEdit.diastolic.toString() : '');
+  const [heartRate,  setHeartRate ] = useNumberState(isEditing ? bloodPressureRecordingToEdit.heartRate.toString() : '');
+  const [notes,      setNotes     ] = useState((isEditing && bloodPressureRecordingToEdit.notes) ? bloodPressureRecordingToEdit.notes : '');
   const [errorText,  setErrorText ] = useErrorString();
 
   const systolicInputRef:   React.MutableRefObject<TextInput | null> = useRef(null);
@@ -33,7 +45,10 @@ export const BloodPressureRecordingForm = () => {
   const notesInputRef:      React.MutableRefObject<TextInput | null> = useRef(null);
 
   useEffect(() => {
-    systolicInputRef.current?.focus()
+    // If we're making a new BP recording, add focus so it's easier to just enter a recording
+    if (!isEditing) {
+      systolicInputRef.current?.focus()
+    }
   }, [])
 
   const isValidNumber = (inputString: string): boolean => {
@@ -52,7 +67,7 @@ export const BloodPressureRecordingForm = () => {
     }
 
     const newBloodPressureRecording = new BloodPressureRecording(
-      new Date(),
+      dateOfRecording,
       Number(systolic),
       Number(diastolic),
       Number(heartRate),
@@ -60,7 +75,7 @@ export const BloodPressureRecordingForm = () => {
     )
 
     const dispatchAction = new BloodPressureDispatchAction(
-      BloodPressureDispatchActionType.NEW,
+      isEditing? BloodPressureDispatchActionType.EDITED : BloodPressureDispatchActionType.NEW,
       newBloodPressureRecording
     )
 
@@ -68,34 +83,33 @@ export const BloodPressureRecordingForm = () => {
     navigateToMainPage();
   }
 
+  const formHeaderText = isEditing ? "Edit Blood Pressure" : "New BP Recording"
+
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>New BP Recording</Text>
-      <Text style={styles.error}>{errorText}</Text>
-      {/* Needs styles */}
-      <View>
-        <TextInput
-          value={formatDateAsYYYYMMDD(dateOfRecording)}
-          onChangeText={() => {}}
-          showSoftInputOnFocus={false}
-          onFocus={(event) => {
-            event.preventDefault()
-            event.target.blur()
-            setIsDateModalOpen(true)
-          }}
-        />
-        <DateTimePickerModal
-          mode="date"
-          isVisible={isDateModalOpen}
-          date={dateOfRecording}
-          onConfirm={(date: Date) => {
-            console.log(date)
-            setIsDateModalOpen(false)
-            setDateOfRecording(date)
-          }}
-          onCancel={() => setIsDateModalOpen(false)}
-        />
-      </View>
+      <Text style={styles.heading}>{formHeaderText}</Text>
+      <TextInput
+        style={[styles.input, styles.dateTimeInput]}
+        value={`${formatDateAsYYYYMMDD(dateOfRecording)}   ${formatTimeFromDate(dateOfRecording, false)}`}
+        onChangeText={() => {}}
+        showSoftInputOnFocus={false}
+        onFocus={(event) => {
+          event.preventDefault()
+          event.target.blur()
+          setIsDateTimeModalOpen(true)
+          stopIncrementingDateTime()
+        }}
+      />
+      <DateTimePickerModal
+        mode="datetime"
+        isVisible={isDateTimeModalOpen}
+        date={dateOfRecording}
+        onConfirm={(date: Date) => {
+          setDateOfRecording(date)
+          setIsDateTimeModalOpen(false)
+        }}
+        onCancel={() => setIsDateTimeModalOpen(false)}
+      />
       <TextInput
         style={styles.input}
         placeholder="Systolic"
@@ -141,6 +155,7 @@ export const BloodPressureRecordingForm = () => {
         onChangeText={setNotes}
         value={notes}
       />
+      <Text style={styles.error}>{errorText}</Text>
       <TouchableOpacity style={styles.addButton} onPress={handleAddNewBloodPressureRecording}>
         <Text style={styles.addButtonText}>Add</Text>
       </TouchableOpacity>
@@ -173,6 +188,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     width: '80%',
     fontSize: 16,
+  },
+  dateTimeInput: {
+    textAlign: "center",
+    fontSize: 18,
+    marginBottom: 30
   },
   addButton: {
     backgroundColor: '#007AFF',

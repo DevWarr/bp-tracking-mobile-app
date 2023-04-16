@@ -1,14 +1,21 @@
-import { Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Text, StyleSheet, TouchableOpacity, Animated } from 'react-native';
 import Ionicons from "@expo/vector-icons/Ionicons"
 import { useState } from 'react';
 import { BloodPressureRecording } from '../../models/BloodPressureRecording';
+import { Swipeable } from 'react-native-gesture-handler';
+
+interface IBloodPressureFlatListItemProps {
+  item: BloodPressureRecording;
+  onEdit: (bloodPressureRecording: BloodPressureRecording) => void;
+  onDelete: (bloodPressureRecording: BloodPressureRecording) => void;
+}
 
 /**
  * Renders a single BloodPressure Recording as a row
  */
-export const BloodPressureFlatListItem = ({ item }: { item: BloodPressureRecording; }) => {
+export const BloodPressureFlatListItem = ({ item, onEdit, onDelete }: IBloodPressureFlatListItemProps) => {
 
-  const [shouldShowNotes, setShouldShowNotes] = useState(false)
+  const [isShowingNotes, setIsShowingNotes] = useState(false)
 
   const renderBloodPressureInfo = () => (
     <>
@@ -22,22 +29,43 @@ export const BloodPressureFlatListItem = ({ item }: { item: BloodPressureRecordi
 
   const renderNotes = () => <Text style={[styles.rowText, styles.notes]}>{item.notes}</Text>
 
+  const renderRightActions = (progressAnimatedValue: Animated.AnimatedInterpolation<string>, dragAnimatedValue: Animated.AnimatedInterpolation<string>) => {
+    const translation = dragAnimatedValue.interpolate({
+      inputRange: [0, 50, 100, 101],
+      outputRange: [-20, 0, 0, 1],
+    });
+    return (
+      <Animated.View style={[styles.rightActions, {transform: [{translateX: translation}]}]}>
+        <TouchableOpacity onPress={() => onEdit(item)}>
+          <Ionicons name="pencil-outline" size={28} color="white" />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => onDelete(item)}>
+          <Ionicons name="trash-outline" size={28} color="white" />
+        </TouchableOpacity>
+      </Animated.View>
+    )
+  }
+
+
   return (
-    <TouchableOpacity
-      style={styles.tableRow}
-      onPress={() => {
-        if (!item.notes) return;
-        setShouldShowNotes(!shouldShowNotes)
-      }}
-    >
-      {shouldShowNotes ? renderNotes() : renderBloodPressureInfo()}
-      <Ionicons name="chatbubble-sharp" color={item.notes ? "black" : "lightgray"} size={28} />
-    </TouchableOpacity>
+    <Swipeable renderRightActions={renderRightActions}>
+      <TouchableOpacity
+        style={styles.tableRow}
+        onPress={() => {
+          if (!item.notes) return;
+          setIsShowingNotes(!isShowingNotes)
+        }}
+      >
+        {isShowingNotes ? renderNotes() : renderBloodPressureInfo()}
+        <Ionicons name="chatbubble-sharp" color={item.notes ? "black" : "lightgray"} size={28} />
+      </TouchableOpacity>
+    </Swipeable>
   );
 }
 
 const styles = StyleSheet.create({
   tableRow: {
+    // backgroundColor: "white",
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -51,5 +79,13 @@ const styles = StyleSheet.create({
   },
   notes: {
     flex: 1,
+  },
+  rightActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 10,
+    backgroundColor: 'red',
+    width: 100,
   },
 })
