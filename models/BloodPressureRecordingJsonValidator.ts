@@ -1,14 +1,11 @@
-import { TimeOfDay } from "./BloodPressureRecording";
-
-const TIME_OF_DAY_ENUM_VALUES = Object.values<string>(TimeOfDay)
-
 const FIELD_MISSING_MESSAGE = "Field is missing"
 const buildInvalidTypeMessage = (expectedType: string, actualType: string) => `Invalid type: expected \`${expectedType}\`, got \`${actualType}\``
 
 enum JSTypes {
   STRING = "string",
   OBJECT = "object",
-  NUMBER = "number"
+  NUMBER = "number",
+  DATE   = "Date"
 }
 
 enum BloodPressureRecordingJsonValidationErrorReason {
@@ -46,6 +43,8 @@ const validateJsonObjects = (jsonObjectList: any[]): BloodPressureRecordingJsonV
   return validationErrors
 }
 
+const isValidDateString = (dateString: string): boolean => !isNaN(new Date(dateString).getTime())
+
 /**
  * Validates whether a single JSON Object is a valid BloodPressureRecording object.
  * 
@@ -75,40 +74,12 @@ const validateSingleJsonObject = (jsonObject: any): BloodPressureRecordingJsonVa
       )
     )
   }
-  if (jsonObject.date && typeof jsonObject.date !== JSTypes.STRING) {
+  if (jsonObject.date && !isValidDateString(jsonObject.date)) {
     validationFieldErrors.push(
       new BloodPressureRecordingJsonFieldValidationError(
         "date",
         BloodPressureRecordingJsonValidationErrorReason.INVALID_TYPE,
-        buildInvalidTypeMessage(JSTypes.STRING, typeof jsonObject.date)
-      )
-    )
-  }
-
-  if (!jsonObject.timeOfDay) {
-    validationFieldErrors.push(
-      new BloodPressureRecordingJsonFieldValidationError(
-        "timeOfDay",
-        BloodPressureRecordingJsonValidationErrorReason.FIELD_MISSING,
-        FIELD_MISSING_MESSAGE
-      )
-    )
-  }
-  if (jsonObject.timeOfDay && typeof jsonObject.timeOfDay !== JSTypes.STRING) {
-    validationFieldErrors.push(
-      new BloodPressureRecordingJsonFieldValidationError(
-        "timeOfDay",
-        BloodPressureRecordingJsonValidationErrorReason.INVALID_TYPE,
-        buildInvalidTypeMessage(JSTypes.STRING, typeof jsonObject.timeOfDay)
-      )
-    )
-  }
-  if (jsonObject.timeOfDay && typeof jsonObject.timeOfDay === JSTypes.STRING && !TIME_OF_DAY_ENUM_VALUES.includes(jsonObject.timeOfDay)) {
-    validationFieldErrors.push(
-      new BloodPressureRecordingJsonFieldValidationError(
-        "timeOfDay",
-        BloodPressureRecordingJsonValidationErrorReason.INVALID_VALUE,
-        `Value should be one of [${TIME_OF_DAY_ENUM_VALUES}]`
+        buildInvalidTypeMessage(JSTypes.DATE, "invalid date")
       )
     )
   }
