@@ -56,7 +56,7 @@ const buildBloodPressureRecordingListFromJsonString = (jsonString: string): Bloo
 
   if (jsonValidationErrors.length) throw jsonValidationErrors
 
-  
+
   return transformedJsonObjectList.map((jsonObject: IBloodPressureJsonObject) => {
     const auditFields = jsonObject.auditFields ?
       new AuditFields(new Date(jsonObject.auditFields.createdDateTime), new Date(jsonObject.auditFields.lastUpdatedDateTime))

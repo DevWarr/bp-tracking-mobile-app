@@ -12,9 +12,9 @@ export const convertDateToDateStringAndTimeOfDay = (date: Date) => {
     return {dateString, timeOfDay}
 }
 
-/** 
+/**
  * Creates a string of the given date with YYYY-MM-DD format.
- * 
+ *
  * How it works:
  *
  * 1. Converts the date to a UTC date with the same year, month, and day
@@ -32,7 +32,7 @@ export const formatTimeOfDayFromDate = (date: Date) => date.getHours() < 12 ? "A
 
 /**
  * Creates a string of the time of the given date with HH:mm format
- * 
+ *
  * Can format time in 24hr time, or 12hr time.
  */
 export const formatTimeFromDate = (date: Date, is24hrTime: boolean = true): string => {

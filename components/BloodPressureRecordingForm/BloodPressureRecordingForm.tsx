@@ -91,7 +91,7 @@ export const BloodPressureRecordingForm = ({ route }: IBloodPressureRecordingFor
       <TextInput
         style={[styles.input, styles.dateTimeInput]}
         value={`${formatDateAsYYYYMMDD(dateOfRecording)}   ${formatTimeFromDate(dateOfRecording, false)}`}
-        onChangeText={() => {}}
+        editable={false}
         showSoftInputOnFocus={false}
         onFocus={(event) => {
           event.preventDefault()
