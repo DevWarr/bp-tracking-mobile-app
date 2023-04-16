@@ -17,8 +17,6 @@ export const BloodPressureRecordingForm = () => {
   };
 
   const [errorText,  setErrorText ] = useErrorString();
-  const [dateString, setDateString] = useState(convertDateToDateStringAndTimeOfDay(new Date()).dateString);
-  const [isAmOrPm,   setIsAmOrPm  ] = useState('AM');
   const [systolic,   setSystolic  ] = useState('');
   const [diastolic,  setDiastolic ] = useState('');
   const [heartRate,  setHeartRate ] = useState('');
@@ -48,10 +46,8 @@ export const BloodPressureRecordingForm = () => {
       return;
     }
 
-    const {dateString, timeOfDay} = convertDateToDateStringAndTimeOfDay(new Date())
     const newBloodPressureRecording = new BloodPressureRecording(
-      dateString,
-      timeOfDay,
+      new Date(),
       Number(systolic),
       Number(diastolic),
       Number(heartRate),

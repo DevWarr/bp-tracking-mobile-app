@@ -1,16 +1,21 @@
-import { AuditFields, BloodPressureRecording, TimeOfDay } from "./BloodPressureRecording";
-import { convertDateToDateStringAndTimeOfDay } from "./conversions";
+import { AuditFields, BloodPressureRecording } from "./BloodPressureRecording";
 import BloodPressureRecordingJsonValidator from "./BloodPressureRecordingJsonValidator";
 
 
+interface IAuditFieldsJsonObject {
+  /** When the model was created. */
+    createdDateTime: string;
+    /** When the model was last updated. */
+    lastUpdatedDateTime: string;
+}
+
 export interface IBloodPressureJsonObject {
   date: string;
-  timeOfDay: TimeOfDay;
   systolic: number;
   diastolic: number;
   heartRate: number;
   notes?: string;
-  auditFields?: AuditFields;
+  auditFields?: IAuditFieldsJsonObject;
 }
 
 /**
@@ -24,12 +29,10 @@ export interface IBloodPressureJsonObject {
  * @returns JSON Object with new format, if transformation was successful
  */
 const transformOldFormatToNewFormat = (jsonObject: any): any => {
-  if ((!jsonObject.date || !jsonObject.timeOfDay) && jsonObject.dateTimeNumber) {
-    const {dateString, timeOfDay} = convertDateToDateStringAndTimeOfDay(new Date(jsonObject.dateTimeNumber))
+  if (!jsonObject.date && jsonObject.dateTimeNumber) {
     return {
       ...jsonObject,
-      date: dateString,
-      timeOfDay
+      date: new Date(jsonObject.dateTimeNumber).toISOString(),
     }
   } else {
     return jsonObject
@@ -53,28 +56,33 @@ const buildBloodPressureRecordingListFromJsonString = (jsonString: string): Bloo
 
   if (jsonValidationErrors.length) throw jsonValidationErrors
 
+  
   return transformedJsonObjectList.map((jsonObject: IBloodPressureJsonObject) => {
+    const auditFields = jsonObject.auditFields ?
+      new AuditFields(new Date(jsonObject.auditFields.createdDateTime), new Date(jsonObject.auditFields.lastUpdatedDateTime))
+      : new AuditFields()
     return new BloodPressureRecording(
-      jsonObject.date,
-      jsonObject.timeOfDay,
+      new Date(jsonObject.date),
       jsonObject.systolic,
       jsonObject.diastolic,
       jsonObject.heartRate,
       jsonObject.notes,
-      jsonObject.auditFields
+      auditFields
     )
   })
 }
 
 const buildJsonStringFromBloodPressureRecordingList = (bloodPressureRecordingList: BloodPressureRecording[]): string => {
   const jsonObjectList: IBloodPressureJsonObject[] = bloodPressureRecordingList.map(bloodPressureRecording => ({
-    date: bloodPressureRecording.date,
-    timeOfDay: bloodPressureRecording.timeOfDay,
+    date: bloodPressureRecording.date.toISOString(),
     systolic: bloodPressureRecording.systolic,
     diastolic: bloodPressureRecording.diastolic,
     heartRate: bloodPressureRecording.heartRate,
     notes: bloodPressureRecording.notes,
-    auditFields: bloodPressureRecording.auditFields
+    auditFields: {
+      createdDateTime: bloodPressureRecording.auditFields.createdDateTime.toISOString(),
+      lastUpdatedDateTime: bloodPressureRecording.auditFields.lastUpdatedDateTime.toISOString()
+    }
   }))
   return JSON.stringify(jsonObjectList)
 }

@@ -2,11 +2,7 @@
 // https://github.com/uuidjs/uuid#getrandomvalues-not-supported
 import 'react-native-get-random-values';
 import { v4 as generateV4UUID } from 'uuid';
-
-export enum TimeOfDay {
-  MORNING = 'AM',
-  EVENING = 'PM'
-}
+import { convertDateToDateStringAndTimeOfDay } from './conversions';
 
 /**
  * Audit Fields for a model.
@@ -16,10 +12,10 @@ export enum TimeOfDay {
 */
 export class AuditFields {
   constructor(
-    /** When the model was created. Should be a valid ISO string in UTC time. */
-    public createdDateTime: string = new Date().toISOString(),
-    /** When the model was last updated. Should be a valid ISO string in UTC time. */
-    public lastUpdatedDateTime: string = new Date().toISOString(),
+    /** When the model was created. */
+    public createdDateTime: Date = new Date(),
+    /** When the model was last updated. */
+    public lastUpdatedDateTime: Date = new Date(),
   ) {}
 }
 
@@ -28,20 +24,17 @@ export class BloodPressureRecording {
 
   /** unique ID */
   readonly id: string;
-  /** Date of the recording. This should be in "YYYY-MM-DD" format. */
-  date: string;
-  /** Whether the recording was taken in the morning or evening */
-  timeOfDay: TimeOfDay
+  /** Date of the recording. JS Date format */
+  date: Date;
   systolic: number;
   diastolic: number;
   heartRate: number;
   notes?: string;
   auditFields: AuditFields;
 
-  constructor(date: string, timeOfDay: TimeOfDay, systolic: number, diastolic: number, heartRate: number, notes?: string, auditFields?: AuditFields) {
+  constructor(date: Date, systolic: number, diastolic: number, heartRate: number, notes?: string, auditFields?: AuditFields) {
     this.id = generateV4UUID()
     this.date = date
-    this.timeOfDay = timeOfDay
     this.systolic = systolic
     this.diastolic = diastolic
     this.heartRate = heartRate
@@ -50,6 +43,7 @@ export class BloodPressureRecording {
   }
 
   get dateInfo(): string {
-    return `${this.date} ${this.timeOfDay}`
+    const {dateString, timeOfDay} = convertDateToDateStringAndTimeOfDay(this.date)
+    return `${dateString} ${timeOfDay}`
   }
 }
