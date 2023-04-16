@@ -6,8 +6,11 @@ import { BloodPressureRecordingDispatchContext } from '../data/BloodPressureReco
 import { BloodPressureDispatchAction, BloodPressureDispatchActionType } from '../data/BloodPressureDispatchAction';
 import { AppStackParamList } from '../App';
 import { useErrorString } from '../hooks/useErrorString';
-import { convertDateToDateStringAndTimeOfDay } from '../models/conversions';
+import { convertDateToDateStringAndTimeOfDay, formatDateAsYYYYMMDD, getTimeOfDayFromDate } from '../models/conversions';
 import { useNumberState } from '../hooks/useNumberState';
+import DateTimePickerModal from "react-native-modal-datetime-picker";
+import RNPickerSelect from 'react-native-picker-select';
+import { TimeOfDay } from '../models/BloodPressureRecording';
 
 export const BloodPressureRecordingForm = () => {
   const bloodPressureRecordingDispatch = useContext(BloodPressureRecordingDispatchContext)
@@ -17,18 +20,20 @@ export const BloodPressureRecordingForm = () => {
     navigation.navigate('MainPage');
   };
 
-  const [errorText,  setErrorText ] = useErrorString();
-  const [dateOfRecording, setDateOfRecording] = useState(convertDateToDateStringAndTimeOfDay(new Date()).dateString);
-  const [isAmOrPm,   setIsAmOrPm  ] = useState('AM');
+  const [dateOfRecording,      setDateOfRecording     ] = useState(new Date());
+  const [isDateModalOpen,      setIsDateModalOpen     ] = useState<boolean>(false);
+  const [timeOfDayOfRecording, setTimeOfDayOfRecording] = useState<TimeOfDay>(getTimeOfDayFromDate(new Date()));
+
   const [systolic,   setSystolic  ] = useNumberState('');
   const [diastolic,  setDiastolic ] = useNumberState('');
   const [heartRate,  setHeartRate ] = useNumberState('');
   const [notes,      setNotes     ] = useState('');
+  const [errorText,  setErrorText ] = useErrorString();
 
-  const systolicInputRef:  React.MutableRefObject<TextInput | null> = useRef(null);
-  const diastolicInputRef: React.MutableRefObject<TextInput | null> = useRef(null);
-  const heartRateInputRef: React.MutableRefObject<TextInput | null> = useRef(null);
-  const notesInputRef:     React.MutableRefObject<TextInput | null> = useRef(null);
+  const systolicInputRef:   React.MutableRefObject<TextInput | null> = useRef(null);
+  const diastolicInputRef:  React.MutableRefObject<TextInput | null> = useRef(null);
+  const heartRateInputRef:  React.MutableRefObject<TextInput | null> = useRef(null);
+  const notesInputRef:      React.MutableRefObject<TextInput | null> = useRef(null);
 
   useEffect(() => {
     systolicInputRef.current?.focus()
@@ -72,6 +77,38 @@ export const BloodPressureRecordingForm = () => {
     <View style={styles.container}>
       <Text style={styles.heading}>New BP Recording</Text>
       <Text style={styles.error}>{errorText}</Text>
+      {/* Needs styles */}
+      <View>
+        <TextInput
+          value={formatDateAsYYYYMMDD(dateOfRecording)}
+          onChangeText={() => {}}
+          showSoftInputOnFocus={false}
+          onFocus={(event) => {
+            event.preventDefault()
+            event.target.blur()
+            setIsDateModalOpen(true)
+          }}
+        />
+        <DateTimePickerModal
+          mode="date"
+          isVisible={isDateModalOpen}
+          date={dateOfRecording}
+          onConfirm={(date: Date) => {
+            console.log(date)
+            setIsDateModalOpen(false)
+            setDateOfRecording(date)
+          }}
+          onCancel={() => setIsDateModalOpen(false)}
+        />
+        <RNPickerSelect
+          onValueChange={(value: TimeOfDay) => console.log(value)}
+          value={timeOfDayOfRecording}
+          items={[
+              { label: TimeOfDay.MORNING, value: TimeOfDay.MORNING },
+              { label: TimeOfDay.EVENING, value: TimeOfDay.EVENING },
+          ]}
+        />
+      </View>
       <TextInput
         style={styles.input}
         placeholder="Systolic"
