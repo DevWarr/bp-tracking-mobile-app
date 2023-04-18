@@ -1,14 +1,14 @@
-import { useCallback, useContext } from "react";
-import { FlatList, StyleSheet, Text, View } from "react-native"
 import Ionicons from "@expo/vector-icons/Ionicons"
+import { useCallback, useContext, useState } from "react";
+import { Alert, FlatList, StyleSheet, Text, View } from "react-native"
 
-import { FlatListHeader } from "./FlatListHeader"
-import { BloodPressureFlatListItem } from "./BloodPressureFlatListItem"
-import { BloodPressureRecording } from "../../models/BloodPressureRecording"
 import { NavigationProp } from "@react-navigation/native";
 import { AppStackParamList } from "../../App";
-import { BloodPressureRecordingContext, BloodPressureRecordingDispatchContext } from "../../data/BloodPressureRecordingProvider";
 import { BloodPressureDispatchAction, BloodPressureDispatchActionType } from "../../data/BloodPressureDispatchAction";
+import { BloodPressureRecordingContext, BloodPressureRecordingDispatchContext } from "../../data/BloodPressureRecordingProvider";
+import { BloodPressureRecording } from "../../models/BloodPressureRecording"
+import { BloodPressureFlatListItem } from "./BloodPressureFlatListItem"
+import { FlatListHeader } from "./FlatListHeader"
 
 interface IBloodPressureFlatListProps {
   paddingBottom?: number,
@@ -28,22 +28,40 @@ export const BloodPressureFlatList = ({ paddingBottom = 0, navigation }: IBloodP
   const bloodPressureRecordings = useContext(BloodPressureRecordingContext)
   const bloodPressureRecordingDispatch = useContext(BloodPressureRecordingDispatchContext)
   const headerValues = ["Date/Time", "Blood Pressure", "Heart Rate"]
+  const [swipedComponentId, setSwipedComponentId] = useState("")
 
   const onEdit = (bloodPressureRecording: BloodPressureRecording) => {
     navigation.navigate("BloodPressureRecordingForm", {bloodPressureRecordingIdToEdit: bloodPressureRecording.id})
   }
 
   const onDelete = (bloodPressureRecording: BloodPressureRecording) => {
-    const action = new BloodPressureDispatchAction(
-      BloodPressureDispatchActionType.DELETED,
-      bloodPressureRecording
-    )
-    bloodPressureRecordingDispatch(action)
+    Alert.alert("Delete recording", "Are you sure you want to delete?", [
+      {
+        text: "Yes",
+        onPress: () => {
+          const action = new BloodPressureDispatchAction(
+            BloodPressureDispatchActionType.DELETED,
+            bloodPressureRecording
+          )
+          bloodPressureRecordingDispatch(action)
+        }
+      },
+      {
+        text: "Cancel",
+        style: "cancel"
+      }
+    ], {cancelable: true})
   }
 
   const renderItem = useCallback(({item}: {item: BloodPressureRecording}) => (
-    <BloodPressureFlatListItem item={item} onEdit={onEdit} onDelete={onDelete}/>
-  ), [bloodPressureRecordings])
+    <BloodPressureFlatListItem
+      item={item}
+      onEdit={onEdit}
+      onDelete={onDelete}
+      swipedComponentId={swipedComponentId}
+      setSwipedComponentId={setSwipedComponentId}
+    />
+  ), [bloodPressureRecordings, swipedComponentId])
 
   return (
     <View style={styles.table} >

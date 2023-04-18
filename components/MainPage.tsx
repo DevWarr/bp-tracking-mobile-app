@@ -1,7 +1,7 @@
-import React, { useContext } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, } from 'react-native';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
 import Ionicons from "@expo/vector-icons/Ionicons"
+import { useNavigation, NavigationProp } from '@react-navigation/native';
+import React from 'react';
+import { StyleSheet, TouchableOpacity, View, } from 'react-native';
 
 import { AppStackParamList } from '../App';
 import { BloodPressureFlatList } from './BloodPressureFlatList/BloodPressureFlatList';

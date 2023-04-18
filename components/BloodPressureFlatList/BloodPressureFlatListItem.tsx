@@ -1,21 +1,29 @@
-import { Text, StyleSheet, TouchableOpacity, Animated } from 'react-native';
-import Ionicons from "@expo/vector-icons/Ionicons"
-import { useState } from 'react';
-import { BloodPressureRecording } from '../../models/BloodPressureRecording';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { memo, useEffect, useRef, useState } from 'react';
+import { Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
+import { BloodPressureRecording } from '../../models/BloodPressureRecording';
 
 interface IBloodPressureFlatListItemProps {
   item: BloodPressureRecording;
   onEdit: (bloodPressureRecording: BloodPressureRecording) => void;
   onDelete: (bloodPressureRecording: BloodPressureRecording) => void;
+  swipedComponentId: string;
+  setSwipedComponentId: React.Dispatch<React.SetStateAction<string>>
 }
 
 /**
  * Renders a single BloodPressure Recording as a row
  */
-export const BloodPressureFlatListItem = ({ item, onEdit, onDelete }: IBloodPressureFlatListItemProps) => {
-
+const BloodPressureFlatListItem = ({ item, onEdit, onDelete, swipedComponentId, setSwipedComponentId }: IBloodPressureFlatListItemProps) => {
   const [isShowingNotes, setIsShowingNotes] = useState(false)
+  const swipeableRef = useRef<Swipeable>(null)
+
+  useEffect(() => {
+    if (swipedComponentId !== item.id) {
+      swipeableRef.current.close()
+    }
+  }, [swipedComponentId])
 
   const renderBloodPressureInfo = () => (
     <>
@@ -29,43 +37,45 @@ export const BloodPressureFlatListItem = ({ item, onEdit, onDelete }: IBloodPres
 
   const renderNotes = () => <Text style={[styles.rowText, styles.notes]}>{item.notes}</Text>
 
-  const renderRightActions = (progressAnimatedValue: Animated.AnimatedInterpolation<string>, dragAnimatedValue: Animated.AnimatedInterpolation<string>) => {
-    const translation = dragAnimatedValue.interpolate({
-      inputRange: [0, 50, 100, 101],
-      outputRange: [-20, 0, 0, 1],
-    });
+  const renderRightActions = () => {
     return (
-      <Animated.View style={[styles.rightActions, {transform: [{translateX: translation}]}]}>
-        <TouchableOpacity onPress={() => onEdit(item)}>
-          <Ionicons name="pencil-outline" size={28} color="white" />
+      <View style={styles.rightActions}>
+        <TouchableOpacity onPress={() => onEdit(item)} style={styles.editButton}>
+          <MaterialCommunityIcons name="lead-pencil" size={32} color="black" />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => onDelete(item)}>
-          <Ionicons name="trash-outline" size={28} color="white" />
+        <TouchableOpacity onPress={() => onDelete(item)} style={styles.deleteButton}>
+          <MaterialCommunityIcons name="trash-can-outline" size={32} color="black"/>
         </TouchableOpacity>
-      </Animated.View>
+      </View>
     )
   }
 
-
+  // TODO: Make the pressable component change opacity when pressing and NOT swiping
   return (
-    <Swipeable renderRightActions={renderRightActions}>
-      <TouchableOpacity
+    <Swipeable
+      renderRightActions={renderRightActions}
+      overshootFriction={8}
+      ref={swipeableRef}
+      onSwipeableWillOpen={() => setSwipedComponentId(item.id)}
+    >
+      <Pressable
         style={styles.tableRow}
         onPress={() => {
+          setSwipedComponentId("")
           if (!item.notes) return;
           setIsShowingNotes(!isShowingNotes)
         }}
       >
         {isShowingNotes ? renderNotes() : renderBloodPressureInfo()}
         <Ionicons name="chatbubble-sharp" color={item.notes ? "black" : "lightgray"} size={28} />
-      </TouchableOpacity>
+      </Pressable>
     </Swipeable>
   );
 }
 
 const styles = StyleSheet.create({
   tableRow: {
-    // backgroundColor: "white",
+    backgroundColor: "white",
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -82,10 +92,46 @@ const styles = StyleSheet.create({
   },
   rightActions: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 10,
-    backgroundColor: 'red',
     width: 100,
   },
+  deleteButton: {
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "red",
+    height: "100%",
+    width: "50%",
+  },
+  editButton: {
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#3c3",
+    height: "100%",
+    width: "50%",
+  }
 })
+
+const memoizedBloodPressureFlatListItem = memo(BloodPressureFlatListItem, (prevProps, newProps) => {
+  // If the item itself changes, re-render (props are NOT equal, return false)
+  if (prevProps.item.id !== newProps.item.id) return false;
+
+  // If the swipedItem changes and it WAS or IS the item id,
+  // we want to close the swipe, so we should re-render (props are NOT equal, return false)
+  if (
+    prevProps.swipedComponentId !== newProps.swipedComponentId &&
+    (prevProps.swipedComponentId === newProps.item.id || newProps.swipedComponentId === newProps.item.id)
+  ) {
+    return false;
+  }
+
+  // If any function signatures change, re-render (props are NOT equal, return false)
+  if (prevProps.onEdit !== newProps.onEdit || prevProps.onDelete !== newProps.onDelete || prevProps.setSwipedComponentId !== newProps.setSwipedComponentId) {
+    return false;
+  }
+  // Otherwise, don't re-render (props ARE equal, return true)
+  return true;
+})
+
+export {
+  memoizedBloodPressureFlatListItem as BloodPressureFlatListItem
+}

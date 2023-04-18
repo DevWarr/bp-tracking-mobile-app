@@ -1,13 +1,11 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { SafeAreaView, View } from "react-native";
+import { SafeAreaView } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BloodPressureRecordingForm, IBloodPressureRecordingFormRouteParams } from "./components/BloodPressureRecordingForm/BloodPressureRecordingForm";
 import { ImportAndExportPage } from "./components/ImportAndExportPage";
 import { MainPage } from "./components/MainPage";
 import { BloodPressureRecordingProvider } from "./data/BloodPressureRecordingProvider";
-import { BloodPressureFlatListItem } from "./components/BloodPressureFlatList/BloodPressureFlatListItem";
-import { BloodPressureRecording } from "./models/BloodPressureRecording";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 /**
  * Following from here: https://reactnavigation.org/docs/typescript/

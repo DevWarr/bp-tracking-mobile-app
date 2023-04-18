@@ -1,17 +1,17 @@
-import React, { useContext, useState } from 'react';
-import { Alert, View, Text, Button, StyleSheet } from 'react-native';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
 import {
-  setStringAsync as setStringToClipboardAsync,
   getStringAsync as getStringFromClipboardAsync,
+  setStringAsync as setStringToClipboardAsync,
 } from 'expo-clipboard';
-import { BloodPressureRecordingContext, BloodPressureRecordingDispatchContext } from '../data/BloodPressureRecordingProvider';
-import { BloodPressureRecording } from '../models/BloodPressureRecording';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
+import React, { useContext, useState } from 'react';
+import { Alert, Button, StyleSheet, Text, View } from 'react-native';
 import { AppStackParamList } from '../App';
-import { BloodPressureFlatList } from './BloodPressureFlatList/BloodPressureFlatList';
 import { BloodPressureInitialDispatchAction } from '../data/BloodPressureDispatchAction';
+import { BloodPressureRecordingContext, BloodPressureRecordingDispatchContext } from '../data/BloodPressureRecordingProvider';
 import { useErrorString } from '../hooks/useErrorString';
+import { BloodPressureRecording } from '../models/BloodPressureRecording';
 import BloodPressureRecordingJsonMapper from '../models/BloodPressureRecordingJsonMapper';
+import { BloodPressureFlatList } from './BloodPressureFlatList/BloodPressureFlatList';
 
 
 export const ImportAndExportPage: React.FC = () => {
