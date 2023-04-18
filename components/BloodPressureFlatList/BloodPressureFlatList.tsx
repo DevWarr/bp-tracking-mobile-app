@@ -35,6 +35,7 @@ export const BloodPressureFlatList = ({ paddingBottom = 0, navigation }: IBloodP
   }
 
   const onDelete = (bloodPressureRecording: BloodPressureRecording) => {
+    // TODO: Could this be done within the list item, instead of as an Alert?
     Alert.alert("Delete recording", "Are you sure you want to delete?", [
       {
         text: "Yes",
