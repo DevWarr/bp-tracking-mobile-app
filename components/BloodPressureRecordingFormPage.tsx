@@ -1,7 +1,6 @@
 import { useNavigation, NavigationProp, Route } from '@react-navigation/native';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { AppStackParamList } from '../App';
 import { BloodPressureDispatchAction, BloodPressureDispatchActionType } from '../data/BloodPressureDispatchAction';
 import { BloodPressureRecordingDispatchContext } from '../data/BloodPressureRecordingProvider';
@@ -10,7 +9,7 @@ import { useErrorString } from '../hooks/useErrorString';
 import { useIncrementingDateTime } from '../hooks/useIncrementingDate';
 import { useNumberState } from '../hooks/useNumberState';
 import { BloodPressureRecording } from '../models/BloodPressureRecording';
-import { formatDateAsYYYYMMDD, formatTimeFromDate } from '../models/conversions';
+import { DateTimePickerComponent } from './DateTimePickerComponent';
 
 export interface IBloodPressureRecordingFormRouteParams {
   /**
@@ -36,7 +35,6 @@ export const BloodPressureRecordingFormPage = ({ route }: IBloodPressureRecordin
   };
 
   const [dateOfRecording,  setDateOfRecording, stopIncrementingDateTime] = useIncrementingDateTime(isEditing ? bloodPressureRecordingToEdit.date : new Date(), isEditing);
-  const [isDateTimeModalOpen, setIsDateTimeModalOpen] = useState<boolean>(false);
 
   const [systolic,   setSystolic  ] = useNumberState(isEditing ? bloodPressureRecordingToEdit.systolic.toString() : '');
   const [diastolic,  setDiastolic ] = useNumberState(isEditing ? bloodPressureRecordingToEdit.diastolic.toString() : '');
@@ -121,26 +119,10 @@ export const BloodPressureRecordingFormPage = ({ route }: IBloodPressureRecordin
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>{formHeaderText}</Text>
-      <TextInput
-        style={[styles.input, styles.dateTimeInput]}
-        value={`${formatDateAsYYYYMMDD(dateOfRecording)}   ${formatTimeFromDate(dateOfRecording, false)}`}
-        showSoftInputOnFocus={false}
-        onFocus={(event) => {
-          event.preventDefault()
-          event.target.blur()
-          setIsDateTimeModalOpen(true)
-          stopIncrementingDateTime()
-        }}
-      />
-      <DateTimePickerModal
-        mode="datetime"
-        isVisible={isDateTimeModalOpen}
-        date={dateOfRecording}
-        onConfirm={(date: Date) => {
-          setDateOfRecording(date)
-          setIsDateTimeModalOpen(false)
-        }}
-        onCancel={() => setIsDateTimeModalOpen(false)}
+      <DateTimePickerComponent
+        dateOfRecording={dateOfRecording}
+        setDateOfRecording={setDateOfRecording}
+        stopIncrementingDateTime={stopIncrementingDateTime}
       />
       <TextInput
         style={styles.input}

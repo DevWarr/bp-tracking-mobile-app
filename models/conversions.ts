@@ -45,3 +45,10 @@ export const formatTimeFromDate = (date: Date, is24hrTime: boolean = true): stri
 
     return `${timeIn12Hours}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')} ${timeOfDay}`
 }
+
+/** Combines two date objects to return one date object with the date and time from each */
+export const buildDateFromDateAndTime = (dateObjectForDate: Date, dateObjectForTime: Date): Date => {
+    const dateString = dateObjectForDate.toISOString().split("T")[0]
+    const timeString = dateObjectForTime.toISOString().split("T")[1]
+    return new Date(`${dateString}T${timeString}`)
+}

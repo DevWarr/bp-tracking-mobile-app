@@ -37,19 +37,23 @@ export const BloodPressureFlatList = ({ bloodPressureRecordings, paddingBottom =
    * Reaction to pressing the edit button on a single flat list item.
    *
    * This function navigates to the BloodPressureRecordingForm with the ID of the recording that should be edited.
+   *
+   * This is within a useCallback() to prevent the function from being re-created on re-render.
    */
-  const onEdit = (bloodPressureRecording: BloodPressureRecording) => {
+  const onEdit = useCallback((bloodPressureRecording: BloodPressureRecording) => {
     if (isSwipeDisabled) return;
     navigation.navigate("BloodPressureRecordingForm", {bloodPressureRecordingIdToEdit: bloodPressureRecording.id})
-  }
+  }, [])
 
   /**
    * Reaction to pressing the delete button on a single flat list item.
    *
    * This function uses an alert to verify the user wants to delete the BP recording,
    * and then dispatches the call to delete the item from react context.
+   *
+   * This is within a useCallback() to prevent the function from being re-created on re-render.
    */
-  const onDelete = (bloodPressureRecording: BloodPressureRecording) => {
+  const onDelete = useCallback((bloodPressureRecording: BloodPressureRecording) => {
     if (isSwipeDisabled) return;
     // TODO: Could this be done within the list item, instead of as an Alert?
     Alert.alert("Delete recording", "Are you sure you want to delete?", [
@@ -68,7 +72,7 @@ export const BloodPressureFlatList = ({ bloodPressureRecordings, paddingBottom =
         style: "cancel"
       }
     ], {cancelable: true})
-  }
+  }, [])
 
   /** Function that renders a singular item in the flat list. */
   const renderItem = useCallback(({item}: {item: BloodPressureRecording}) => (
@@ -80,7 +84,7 @@ export const BloodPressureFlatList = ({ bloodPressureRecordings, paddingBottom =
       setSwipedComponentId={setSwipedComponentId}
       isSwipeDisabled={!!isSwipeDisabled}
     />
-  ), [bloodPressureRecordings, swipedComponentId])
+  ), [bloodPressureRecordings, swipedComponentId, isSwipeDisabled])
 
   return (
     <View style={styles.table} >
