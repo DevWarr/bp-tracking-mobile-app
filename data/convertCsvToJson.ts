@@ -1,4 +1,5 @@
 // Convert CSV BP Data to Json
+/* tslint:disable:no-console */
 
 const inputString = `2022-12-07 evening ,150,94,58,
 2022-12-08 morning,124,88,85,
@@ -18,7 +19,7 @@ const inputString = `2022-12-07 evening ,150,94,58,
 2022-12-15 morning ,--,--,--,
 2022-12-15 evening,143,86,86,
 2022-12-16 morning,143,93,60,
-2022-12-16 evening ,133,89,74,Asian friends of DFW Winter party (BP taken before leaving) 
+2022-12-16 evening ,133,89,74,Asian friends of DFW Winter party (BP taken before leaving)
 2022-12-17 morning,--,--,--,
 2022-12-17 evening,147,94,66,
 2022-12-18 morning,158,101,63,
@@ -46,7 +47,7 @@ const inputString = `2022-12-07 evening ,150,94,58,
 2022-12-29 morning,151,98,55,
 2022-12-29 evening ,154,78,62,
 2022-12-30 morning,136,83,61,
-2022-12-30 evening ,129,84,64,Occasional dizziness/lightheadedness 
+2022-12-30 evening ,129,84,64,Occasional dizziness/lightheadedness
 2022-12-31 morning,142,84,62,
 2022-12-31 evening ,106,71,91,
 2023-01-01 morning,132,78,55,
@@ -72,13 +73,13 @@ const inputString = `2022-12-07 evening ,150,94,58,
 2023-01-11 morning ,111,71,79,
 2023-01-11 evening,127,74,58,
 2023-01-12 morning ,118,67,57,"1 run immediately before this, it was 132/94, 83bpm. 16:45 felt very light headed and had to take a break from work"
-2023-01-12 evening,119,76,68,Diarrhea 
+2023-01-12 evening,119,76,68,Diarrhea
 2023-01-13 morning ,,,,
 2023-01-13 evening,119,66,71,
 2023-01-14 morning,130,75,55,
 2023-01-14 evening,125,70,62,
 2023-01-15 morning,125,81,71,
-2023-01-15 evening,,,,Forgot to take BP medication 
+2023-01-15 evening,,,,Forgot to take BP medication
 2023-01-16 morning,132,74,55,Took BP medication this morning
 2023-01-16 evening,122,75,73,
 2023-01-17 morning,,,,

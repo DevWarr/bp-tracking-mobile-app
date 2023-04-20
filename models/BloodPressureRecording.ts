@@ -6,10 +6,10 @@ import { convertDateToDateStringAndTimeOfDay } from './conversions';
 
 /**
  * Audit Fields for a model.
- * 
+ *
  * Fields in this interface are readonly,
  * so any updates to the audit fields will require you to create a new AuditField.
-*/
+ */
 export class AuditFields {
   constructor(
     /** When the model was created. */

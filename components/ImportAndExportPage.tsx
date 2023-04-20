@@ -1,19 +1,20 @@
-import React, { useContext, useState } from 'react';
-import { Alert, View, Text, Button, StyleSheet } from 'react-native';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
 import {
-  setStringAsync as setStringToClipboardAsync,
   getStringAsync as getStringFromClipboardAsync,
+  setStringAsync as setStringToClipboardAsync,
 } from 'expo-clipboard';
-import { BloodPressureRecordingContext, BloodPressureRecordingDispatchContext } from '../data/BloodPressureRecordingProvider';
-import { BloodPressureRecording } from '../models/BloodPressureRecording';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { useContext, useState } from 'react';
+import { Alert, Button, StyleSheet, Text, View } from 'react-native';
 import { AppStackParamList } from '../App';
-import { BloodPressureFlatList } from './BloodPressureFlatList/BloodPressureFlatList';
 import { BloodPressureInitialDispatchAction } from '../data/BloodPressureDispatchAction';
+import { BloodPressureRecordingContext, BloodPressureRecordingDispatchContext } from '../data/BloodPressureRecordingProvider';
 import { useErrorString } from '../hooks/useErrorString';
+import { BloodPressureRecording } from '../models/BloodPressureRecording';
 import BloodPressureRecordingJsonMapper from '../models/BloodPressureRecordingJsonMapper';
+import { BloodPressureFlatList } from './BloodPressureFlatList/BloodPressureFlatList';
 
-export const ImportAndExportPage: React.FC = () => {
+
+export const ImportAndExportPage = () => {
   const bloodPressureRecordings = useContext(BloodPressureRecordingContext)
   const dispatchBloodPressureRecordings = useContext(BloodPressureRecordingDispatchContext)
   const navigation = useNavigation<NavigationProp<AppStackParamList, "ImportAndExportPage">>();
@@ -21,17 +22,26 @@ export const ImportAndExportPage: React.FC = () => {
   const [importData, setImportData] = useState<BloodPressureRecording[]>([]);
   const [importError, setImportError] = useErrorString()
 
+  /**
+   * Reaction when pressing "Import" button.
+   *
+   * Takes data from clipboard and attempts to import it into state.
+   */
   const handleImportData = async () => {
     const stringData = await getStringFromClipboardAsync();
     try {
-      const bloodPressureRecordings = BloodPressureRecordingJsonMapper.buildBloodPressureRecordingListFromJsonString(stringData)
-      setImportData(bloodPressureRecordings);
+      const bloodPressureRecordingsFromImport = BloodPressureRecordingJsonMapper.buildBloodPressureRecordingListFromJsonString(stringData)
+      setImportData(bloodPressureRecordingsFromImport);
     } catch (error) {
-      console.error(error)
       setImportError("Invalid input. Are you sure you have valid data copied?")
     }
   };
 
+  /**
+   * Reaction when pressing "Save import data" button.
+   *
+   * Gives the user an alert, and if confirmed, saves data from state to memory.
+   */
   const handleSaveImportData = () => {
     Alert.alert(
       "Are you sure you want to import?",
@@ -43,6 +53,7 @@ export const ImportAndExportPage: React.FC = () => {
     )
   }
 
+  /** Saves data from state to memory. */
   const saveData = () => {
     dispatchBloodPressureRecordings(
       new BloodPressureInitialDispatchAction(importData)
@@ -50,6 +61,11 @@ export const ImportAndExportPage: React.FC = () => {
     navigation.navigate("MainPage")
   }
 
+  /**
+   * Reaction when pressing "Export" button.
+   *
+   * Takes existing BP data from context and saves it as a JSON string to the user's clipboard.
+   */
   const handleExportData = async () => {
     const jsonString = BloodPressureRecordingJsonMapper.buildJsonStringFromBloodPressureRecordingList(bloodPressureRecordings)
     await setStringToClipboardAsync(jsonString)
@@ -67,6 +83,7 @@ export const ImportAndExportPage: React.FC = () => {
       </View>
 
       <View style={styles.section}>
+
         <Text style={styles.title}>Import Data</Text>
         <Text style={styles.description}>
           Copy a JSON string to your clipboard, then click the import button to import the data.
@@ -76,12 +93,11 @@ export const ImportAndExportPage: React.FC = () => {
 
         <View style={styles.importPreview}>
           <Text style={styles.subtitle}>Import Preview</Text>
-            <BloodPressureFlatList bloodPressureRecordings={importData} />
+            <BloodPressureFlatList bloodPressureRecordings={importData} isSwipeDisabled={true} />
           <Button title="Save import data" disabled={!importData.length} onPress={handleSaveImportData} />
         </View>
 
       </View>
-
     </View>
   );
 };

@@ -16,11 +16,11 @@ export const useErrorString = (): [string, T_SetErrorStringHook] => {
   }
 
   const setErrorString = (
-    errorString: string,
+    errorMessage: string,
     millisecondDelayForErrorToGoAway: number = 2000
   ) => {
     resetTimout()
-    setErrorStringState(errorString)
+    setErrorStringState(errorMessage)
 
     setTimeoutId(
       setTimeout(() => {

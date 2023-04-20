@@ -1,16 +1,23 @@
-import { useCallback } from "react";
-import { FlatList, StyleSheet, Text, View } from "react-native"
 import Ionicons from "@expo/vector-icons/Ionicons"
+import { useCallback, useContext, useState } from "react";
+import { Alert, FlatList, StyleSheet, Text, View } from "react-native"
 
-import { FlatListHeader } from "./FlatListHeader"
-import { BloodPressureFlatListItem } from "./BloodPressureFlatListItem"
+import { NavigationProp } from "@react-navigation/native";
+import { AppStackParamList } from "../../App";
+import { BloodPressureDispatchAction, BloodPressureDispatchActionType } from "../../data/BloodPressureDispatchAction";
+import { BloodPressureRecordingDispatchContext } from "../../data/BloodPressureRecordingProvider";
 import { BloodPressureRecording } from "../../models/BloodPressureRecording"
+import { BloodPressureFlatListItem } from "./BloodPressureFlatListItem"
+import { FlatListHeader } from "./FlatListHeader"
 
 interface IBloodPressureFlatListProps {
-  bloodPressureRecordings: BloodPressureRecording[],
-  paddingBottom?: number
+  bloodPressureRecordings: BloodPressureRecording[];
+  paddingBottom?: number;
+  navigation?: NavigationProp<AppStackParamList, "MainPage">;
+  isSwipeDisabled?: boolean;
 }
 
+/** React component to display when no items are found for the FlatList. */
 const EmptyListComponent = () => {
   return (
     <View style={styles.emptyComponentContainer}>
@@ -20,11 +27,64 @@ const EmptyListComponent = () => {
   )
 }
 
-export const BloodPressureFlatList = ({ bloodPressureRecordings, paddingBottom = 0 }: IBloodPressureFlatListProps) => {
-
+/** React Component that loads all BP Recordings from context and displays them in a FlatList. */
+export const BloodPressureFlatList = ({ bloodPressureRecordings, paddingBottom = 0, navigation, isSwipeDisabled }: IBloodPressureFlatListProps) => {
+  const bloodPressureRecordingDispatch = useContext(BloodPressureRecordingDispatchContext)
   const headerValues = ["Date/Time", "Blood Pressure", "Heart Rate"]
+  const [swipedComponentId, setSwipedComponentId] = useState("")
 
-  const renderItem = useCallback(({item}: {item: BloodPressureRecording}) => <BloodPressureFlatListItem item={item} />, [])
+  /**
+   * Reaction to pressing the edit button on a single flat list item.
+   *
+   * This function navigates to the BloodPressureRecordingForm with the ID of the recording that should be edited.
+   *
+   * This is within a useCallback() to prevent the function from being re-created on re-render.
+   */
+  const onEdit = useCallback((bloodPressureRecording: BloodPressureRecording) => {
+    if (isSwipeDisabled) return;
+    navigation.navigate("BloodPressureRecordingForm", {bloodPressureRecordingIdToEdit: bloodPressureRecording.id})
+  }, [])
+
+  /**
+   * Reaction to pressing the delete button on a single flat list item.
+   *
+   * This function uses an alert to verify the user wants to delete the BP recording,
+   * and then dispatches the call to delete the item from react context.
+   *
+   * This is within a useCallback() to prevent the function from being re-created on re-render.
+   */
+  const onDelete = useCallback((bloodPressureRecording: BloodPressureRecording) => {
+    if (isSwipeDisabled) return;
+    // TODO: Could this be done within the list item, instead of as an Alert?
+    Alert.alert("Delete recording", "Are you sure you want to delete?", [
+      {
+        text: "Yes",
+        onPress: () => {
+          const action = new BloodPressureDispatchAction(
+            BloodPressureDispatchActionType.DELETED,
+            bloodPressureRecording
+          )
+          bloodPressureRecordingDispatch(action)
+        }
+      },
+      {
+        text: "Cancel",
+        style: "cancel"
+      }
+    ], {cancelable: true})
+  }, [])
+
+  /** Function that renders a singular item in the flat list. */
+  const renderItem = useCallback(({item}: {item: BloodPressureRecording}) => (
+    <BloodPressureFlatListItem
+      item={item}
+      onEdit={onEdit}
+      onDelete={onDelete}
+      swipedComponentId={swipedComponentId}
+      setSwipedComponentId={setSwipedComponentId}
+      isSwipeDisabled={!!isSwipeDisabled}
+    />
+  ), [bloodPressureRecordings, swipedComponentId, isSwipeDisabled])
 
   return (
     <View style={styles.table} >
@@ -34,7 +94,7 @@ export const BloodPressureFlatList = ({ bloodPressureRecordings, paddingBottom =
         data={bloodPressureRecordings}
         renderItem={renderItem}
         keyExtractor={(item) => `${item.dateInfo}${item.id}`}
-        ListFooterComponent={<View style={{paddingBottom: paddingBottom}} />}
+        ListFooterComponent={<View style={{paddingBottom}} />}
         ListEmptyComponent={<EmptyListComponent />}
       />
     </View>

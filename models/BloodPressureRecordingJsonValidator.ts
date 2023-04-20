@@ -31,7 +31,7 @@ export class BloodPressureRecordingJsonValidationError {
 
 /**
  * Validates whether a list of JSON objects are a valid BloodPressureRecording object.
- * 
+ *
  * @param jsonObjectList List of potential JSON Objects
  * @returns List of validation errors. If the list is empty, no validation errors were found '' '
  */
@@ -43,13 +43,14 @@ const validateJsonObjects = (jsonObjectList: any[]): BloodPressureRecordingJsonV
   return validationErrors
 }
 
+/** Validates if the given string can be converted into a Date object. */
 const isValidDateString = (dateString: string): boolean => !isNaN(new Date(dateString).getTime())
 
 /**
  * Validates whether a single JSON Object is a valid BloodPressureRecording object.
- * 
+ *
  * @param jsonObject object to validate
- * @returns validation error. If `null` is returned, there are no validation errors
+ * @returns validation error. If `null` is returned, there are no validation errors.
  */
 const validateSingleJsonObject = (jsonObject: any): BloodPressureRecordingJsonValidationError | null => {
 

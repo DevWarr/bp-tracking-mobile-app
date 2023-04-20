@@ -1,10 +1,10 @@
-import React, { useContext } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, } from 'react-native';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
 import Ionicons from "@expo/vector-icons/Ionicons"
+import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { useContext } from 'react';
+import { StyleSheet, TouchableOpacity, View, } from 'react-native';
 
-import { BloodPressureRecordingContext } from '../data/BloodPressureRecordingProvider';
 import { AppStackParamList } from '../App';
+import { BloodPressureRecordingContext } from "../data/BloodPressureRecordingProvider";
 import { BloodPressureFlatList } from './BloodPressureFlatList/BloodPressureFlatList';
 
 export const MainPage = () => {
@@ -14,7 +14,7 @@ export const MainPage = () => {
   return (
     <View style={styles.container}>
 
-      <BloodPressureFlatList bloodPressureRecordings={bloodPressureRecordings} paddingBottom={120} />
+      <BloodPressureFlatList bloodPressureRecordings={bloodPressureRecordings} paddingBottom={120} navigation={navigation}/>
 
       <View style={styles.footerContainer}>
         <TouchableOpacity
