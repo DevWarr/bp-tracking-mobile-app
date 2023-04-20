@@ -2,7 +2,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { BloodPressureRecordingForm, IBloodPressureRecordingFormRouteParams } from "./components/BloodPressureRecordingForm/BloodPressureRecordingForm";
+import { BloodPressureRecordingForm, IBloodPressureRecordingFormRouteParams } from "./components/BloodPressureRecordingForm";
 import { ImportAndExportPage } from "./components/ImportAndExportPage";
 import { MainPage } from "./components/MainPage";
 import { BloodPressureRecordingProvider } from "./data/BloodPressureRecordingProvider";
