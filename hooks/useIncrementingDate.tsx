@@ -9,7 +9,7 @@ type T_useIncrementingDate = [
 /**
  * Custom hook to store a date to state, with its time incrementing.
  *
- * @param isDate true if this increments the date, and false if it increments the time
+ * @param neverIncrement false if this should start incrementing, and true if it should just return a date
  */
 export const useIncrementingDateTime = (initialDate: Date = new Date(), neverIncrement: boolean = false): T_useIncrementingDate => {
   const [date,       setDate      ] = useState(initialDate);

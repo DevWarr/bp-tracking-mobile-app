@@ -13,6 +13,11 @@ import { BloodPressureRecording } from '../models/BloodPressureRecording';
 import { formatDateAsYYYYMMDD, formatTimeFromDate } from '../models/conversions';
 
 export interface IBloodPressureRecordingFormRouteParams {
+  /**
+   * ID of the Blood Pressure recording to edit.
+   *
+   * If this value is undefined or null, then we're creating a new Blood Pressure recording.
+   */
   bloodPressureRecordingIdToEdit?: string
 }
 
@@ -20,7 +25,7 @@ interface IBloodPressureRecordingFormProps {
   route?: Route<"BloodPressureRecordingForm", IBloodPressureRecordingFormRouteParams>
 }
 
-export const BloodPressureRecordingForm = ({ route }: IBloodPressureRecordingFormProps) => {
+export const BloodPressureRecordingFormPage = ({ route }: IBloodPressureRecordingFormProps) => {
 
   const {isEditing, bloodPressureRecordingToEdit} = selectBloodPressureToEdit(route?.params?.bloodPressureRecordingIdToEdit)
   const bloodPressureRecordingDispatch = useContext(BloodPressureRecordingDispatchContext)
@@ -51,6 +56,7 @@ export const BloodPressureRecordingForm = ({ route }: IBloodPressureRecordingFor
     }
   }, [])
 
+  /** Validation function that checks if something is a valid number. */
   const isValidNumber = (inputString: string): boolean => {
     const numberValue = Number(inputString)
     return (
@@ -60,12 +66,24 @@ export const BloodPressureRecordingForm = ({ route }: IBloodPressureRecordingFor
     )
   }
 
-  const handleAddNewBloodPressureRecording = () => {
-    if (!isValidNumber(systolic) || !isValidNumber(diastolic) || !isValidNumber(heartRate)) {
-      setErrorText("Please fill out first three fields with valid numbers.");
-      return;
-    }
+  /**
+   * Builds a dispatch action to edit a BP recording.
+   *
+   * NOTE: This action modifies the BP recording itself before dispatch.
+   */
+  const buildEditBloodPressureDispatchAction = (): BloodPressureDispatchAction => {
+    bloodPressureRecordingToEdit.date = dateOfRecording
+    bloodPressureRecordingToEdit.systolic = Number(systolic)
+    bloodPressureRecordingToEdit.diastolic = Number(diastolic)
+    bloodPressureRecordingToEdit.heartRate = Number(heartRate)
+    bloodPressureRecordingToEdit.notes = notes
+    bloodPressureRecordingToEdit.auditFields.lastUpdatedDateTime = new Date()
 
+    return new BloodPressureDispatchAction(BloodPressureDispatchActionType.EDITED, bloodPressureRecordingToEdit)
+  }
+
+  /** Builds a dispatch action to create a new BP recording. */
+  const buildNewBloodPressureAction = (): BloodPressureDispatchAction => {
     const newBloodPressureRecording = new BloodPressureRecording(
       dateOfRecording,
       Number(systolic),
@@ -74,16 +92,31 @@ export const BloodPressureRecordingForm = ({ route }: IBloodPressureRecordingFor
       notes
     )
 
-    const dispatchAction = new BloodPressureDispatchAction(
-      isEditing? BloodPressureDispatchActionType.EDITED : BloodPressureDispatchActionType.NEW,
-      newBloodPressureRecording
-    )
+    return new BloodPressureDispatchAction(BloodPressureDispatchActionType.NEW, newBloodPressureRecording)
+  }
 
+  /**
+   * Reaction to pressing the "Add" or "Update" button on the form.
+   *
+   * This function:
+   *
+   * 1. Validates the form fields
+   * 2. Creates a BloodPressureDispatchAction from the form fields
+   * 3. Dispatches the action
+   * 4. Navigates back to the main page
+   */
+  const handleSubmit = () => {
+    if (!isValidNumber(systolic) || !isValidNumber(diastolic) || !isValidNumber(heartRate)) {
+      setErrorText("Please fill out first three fields with valid numbers.");
+      return;
+    }
+
+    const dispatchAction = isEditing ? buildEditBloodPressureDispatchAction() : buildNewBloodPressureAction()
     bloodPressureRecordingDispatch(dispatchAction);
     navigateToMainPage();
   }
 
-  const formHeaderText = isEditing ? "Edit Blood Pressure" : "New BP Recording"
+  const formHeaderText = isEditing ? "Update Blood Pressure" : "New BP Recording"
 
   return (
     <View style={styles.container}>
@@ -155,8 +188,8 @@ export const BloodPressureRecordingForm = ({ route }: IBloodPressureRecordingFor
         value={notes}
       />
       <Text style={styles.error}>{errorText}</Text>
-      <TouchableOpacity style={styles.addButton} onPress={handleAddNewBloodPressureRecording}>
-        <Text style={styles.addButtonText}>Add</Text>
+      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+        <Text style={styles.submitButtonText}>{isEditing ? "Update" : "Add"}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -193,13 +226,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginBottom: 30
   },
-  addButton: {
+  submitButton: {
     backgroundColor: '#007AFF',
     borderRadius: 5,
     padding: 10,
     marginTop: 20,
   },
-  addButtonText: {
+  submitButtonText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',

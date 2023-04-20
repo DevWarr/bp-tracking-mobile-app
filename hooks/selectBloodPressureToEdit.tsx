@@ -11,7 +11,7 @@ interface ISelectBloodPressureToEdit {
  * Returns blood pressure recording for the edit form, if one is requested.
  *
  * REQUIRED: This hook uses the BloodPressureRecordingContext,
- * so it must be used within a <BloodPressureRecordingProvider>
+ * so it must be used within a `<BloodPressureRecordingProvider>`.
  *
  * @param bloodPressureRecordingId
  * @returns Whether we're editing the form, and if we are - which BP recording we're editing

@@ -3,13 +3,14 @@ import BloodPressureRecordingJsonValidator from "./BloodPressureRecordingJsonVal
 
 
 interface IAuditFieldsJsonObject {
-  /** When the model was created. */
-    createdDateTime: string;
-    /** When the model was last updated. */
-    lastUpdatedDateTime: string;
+  /** When the model was created. ISO date string, UTC timezone. */
+  createdDateTime: string;
+  /** When the model was last updated. ISO date string, UTC timezone. */
+  lastUpdatedDateTime: string;
 }
 
 export interface IBloodPressureJsonObject {
+  /** Date of the Blood Pressure recording. ISO date string, UTC timezone. */
   date: string;
   systolic: number;
   diastolic: number;
@@ -58,9 +59,11 @@ const buildBloodPressureRecordingListFromJsonString = (jsonString: string): Bloo
 
 
   return transformedJsonObjectList.map((jsonObject: IBloodPressureJsonObject) => {
+    // If audit fields already exist, use them. Otherwise, make new ones '' '
     const auditFields = jsonObject.auditFields ?
       new AuditFields(new Date(jsonObject.auditFields.createdDateTime), new Date(jsonObject.auditFields.lastUpdatedDateTime))
       : new AuditFields()
+
     return new BloodPressureRecording(
       new Date(jsonObject.date),
       jsonObject.systolic,
@@ -72,6 +75,11 @@ const buildBloodPressureRecordingListFromJsonString = (jsonString: string): Bloo
   })
 }
 
+/**
+ * Builds a JSON string from a list of blood pressure recordings.
+ *
+ * @returns JSON string of all blood pressure recordings
+ */
 const buildJsonStringFromBloodPressureRecordingList = (bloodPressureRecordingList: BloodPressureRecording[]): string => {
   const jsonObjectList: IBloodPressureJsonObject[] = bloodPressureRecordingList.map(bloodPressureRecording => ({
     date: bloodPressureRecording.date.toISOString(),

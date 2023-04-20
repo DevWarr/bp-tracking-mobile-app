@@ -5,16 +5,19 @@ import { Alert, FlatList, StyleSheet, Text, View } from "react-native"
 import { NavigationProp } from "@react-navigation/native";
 import { AppStackParamList } from "../../App";
 import { BloodPressureDispatchAction, BloodPressureDispatchActionType } from "../../data/BloodPressureDispatchAction";
-import { BloodPressureRecordingContext, BloodPressureRecordingDispatchContext } from "../../data/BloodPressureRecordingProvider";
+import { BloodPressureRecordingDispatchContext } from "../../data/BloodPressureRecordingProvider";
 import { BloodPressureRecording } from "../../models/BloodPressureRecording"
 import { BloodPressureFlatListItem } from "./BloodPressureFlatListItem"
 import { FlatListHeader } from "./FlatListHeader"
 
 interface IBloodPressureFlatListProps {
-  paddingBottom?: number,
-  navigation: NavigationProp<AppStackParamList, "MainPage">
+  bloodPressureRecordings: BloodPressureRecording[];
+  paddingBottom?: number;
+  navigation?: NavigationProp<AppStackParamList, "MainPage">;
+  isSwipeDisabled?: boolean;
 }
 
+/** React component to display when no items are found for the FlatList. */
 const EmptyListComponent = () => {
   return (
     <View style={styles.emptyComponentContainer}>
@@ -24,17 +27,30 @@ const EmptyListComponent = () => {
   )
 }
 
-export const BloodPressureFlatList = ({ paddingBottom = 0, navigation }: IBloodPressureFlatListProps) => {
-  const bloodPressureRecordings = useContext(BloodPressureRecordingContext)
+/** React Component that loads all BP Recordings from context and displays them in a FlatList. */
+export const BloodPressureFlatList = ({ bloodPressureRecordings, paddingBottom = 0, navigation, isSwipeDisabled }: IBloodPressureFlatListProps) => {
   const bloodPressureRecordingDispatch = useContext(BloodPressureRecordingDispatchContext)
   const headerValues = ["Date/Time", "Blood Pressure", "Heart Rate"]
   const [swipedComponentId, setSwipedComponentId] = useState("")
 
+  /**
+   * Reaction to pressing the edit button on a single flat list item.
+   *
+   * This function navigates to the BloodPressureRecordingForm with the ID of the recording that should be edited.
+   */
   const onEdit = (bloodPressureRecording: BloodPressureRecording) => {
+    if (isSwipeDisabled) return;
     navigation.navigate("BloodPressureRecordingForm", {bloodPressureRecordingIdToEdit: bloodPressureRecording.id})
   }
 
+  /**
+   * Reaction to pressing the delete button on a single flat list item.
+   *
+   * This function uses an alert to verify the user wants to delete the BP recording,
+   * and then dispatches the call to delete the item from react context.
+   */
   const onDelete = (bloodPressureRecording: BloodPressureRecording) => {
+    if (isSwipeDisabled) return;
     // TODO: Could this be done within the list item, instead of as an Alert?
     Alert.alert("Delete recording", "Are you sure you want to delete?", [
       {
@@ -54,6 +70,7 @@ export const BloodPressureFlatList = ({ paddingBottom = 0, navigation }: IBloodP
     ], {cancelable: true})
   }
 
+  /** Function that renders a singular item in the flat list. */
   const renderItem = useCallback(({item}: {item: BloodPressureRecording}) => (
     <BloodPressureFlatListItem
       item={item}
@@ -61,6 +78,7 @@ export const BloodPressureFlatList = ({ paddingBottom = 0, navigation }: IBloodP
       onDelete={onDelete}
       swipedComponentId={swipedComponentId}
       setSwipedComponentId={setSwipedComponentId}
+      isSwipeDisabled={!!isSwipeDisabled}
     />
   ), [bloodPressureRecordings, swipedComponentId])
 

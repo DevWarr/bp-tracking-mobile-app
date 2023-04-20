@@ -2,7 +2,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { BloodPressureRecordingForm, IBloodPressureRecordingFormRouteParams } from "./components/BloodPressureRecordingForm";
+import { BloodPressureRecordingFormPage, IBloodPressureRecordingFormRouteParams } from "./components/BloodPressureRecordingFormPage";
 import { ImportAndExportPage } from "./components/ImportAndExportPage";
 import { MainPage } from "./components/MainPage";
 import { BloodPressureRecordingProvider } from "./data/BloodPressureRecordingProvider";
@@ -16,6 +16,7 @@ export type AppStackParamList = {
   ImportAndExportPage: undefined,
 }
 
+/** Entry point of Application. */
 export default function App() {
   const Stack = createNativeStackNavigator<AppStackParamList>();
 
@@ -26,7 +27,7 @@ export default function App() {
           <NavigationContainer>
             <Stack.Navigator initialRouteName='MainPage'>
               <Stack.Screen name="MainPage" component={MainPage} options={{title: "Main Page"}}/>
-              <Stack.Screen name="BloodPressureRecordingForm" component={BloodPressureRecordingForm} options={{title: "Blood Pressure Recording Form"}}/>
+              <Stack.Screen name="BloodPressureRecordingForm" component={BloodPressureRecordingFormPage} options={{title: "Blood Pressure Recording Form"}}/>
               <Stack.Screen name="ImportAndExportPage" component={ImportAndExportPage} options={{title: "Import and Export Page"}}/>
             </Stack.Navigator>
           </NavigationContainer>

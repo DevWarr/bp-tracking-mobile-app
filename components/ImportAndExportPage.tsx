@@ -22,6 +22,11 @@ export const ImportAndExportPage = () => {
   const [importData, setImportData] = useState<BloodPressureRecording[]>([]);
   const [importError, setImportError] = useErrorString()
 
+  /**
+   * Reaction when pressing "Import" button.
+   *
+   * Takes data from clipboard and attempts to import it into state.
+   */
   const handleImportData = async () => {
     const stringData = await getStringFromClipboardAsync();
     try {
@@ -32,6 +37,11 @@ export const ImportAndExportPage = () => {
     }
   };
 
+  /**
+   * Reaction when pressing "Save import data" button.
+   *
+   * Gives the user an alert, and if confirmed, saves data from state to memory.
+   */
   const handleSaveImportData = () => {
     Alert.alert(
       "Are you sure you want to import?",
@@ -43,6 +53,7 @@ export const ImportAndExportPage = () => {
     )
   }
 
+  /** Saves data from state to memory. */
   const saveData = () => {
     dispatchBloodPressureRecordings(
       new BloodPressureInitialDispatchAction(importData)
@@ -50,6 +61,11 @@ export const ImportAndExportPage = () => {
     navigation.navigate("MainPage")
   }
 
+  /**
+   * Reaction when pressing "Export" button.
+   *
+   * Takes existing BP data from context and saves it as a JSON string to the user's clipboard.
+   */
   const handleExportData = async () => {
     const jsonString = BloodPressureRecordingJsonMapper.buildJsonStringFromBloodPressureRecordingList(bloodPressureRecordings)
     await setStringToClipboardAsync(jsonString)
@@ -67,6 +83,7 @@ export const ImportAndExportPage = () => {
       </View>
 
       <View style={styles.section}>
+
         <Text style={styles.title}>Import Data</Text>
         <Text style={styles.description}>
           Copy a JSON string to your clipboard, then click the import button to import the data.
@@ -76,12 +93,11 @@ export const ImportAndExportPage = () => {
 
         <View style={styles.importPreview}>
           <Text style={styles.subtitle}>Import Preview</Text>
-            <BloodPressureFlatList bloodPressureRecordings={importData} />
+            <BloodPressureFlatList bloodPressureRecordings={importData} isSwipeDisabled={true} />
           <Button title="Save import data" disabled={!importData.length} onPress={handleSaveImportData} />
         </View>
 
       </View>
-
     </View>
   );
 };

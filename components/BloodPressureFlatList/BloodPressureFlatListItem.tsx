@@ -6,16 +6,27 @@ import { BloodPressureRecording } from '../../models/BloodPressureRecording';
 
 interface IBloodPressureFlatListItemProps {
   item: BloodPressureRecording;
+  /** Function to call when the edit button is pressed. */
   onEdit: (bloodPressureRecording: BloodPressureRecording) => void;
+  /** Function to call when the delete button is pressed. */
   onDelete: (bloodPressureRecording: BloodPressureRecording) => void;
+  /**
+   * ID of the flatlist item that's currently swiped.
+   *
+   * If this component's ID doesn't match the swipedComponentId,
+   * this component should not be swiped open.
+   */
   swipedComponentId: string;
-  setSwipedComponentId: React.Dispatch<React.SetStateAction<string>>
+  setSwipedComponentId: React.Dispatch<React.SetStateAction<string>>;
+  isSwipeDisabled: boolean
 }
 
 /**
- * Renders a single BloodPressure Recording as a row
+ * Renders a single BloodPressure Recording as a row.
+ *
+ * NOTE: The exported component is the memoized flat list item below this function.
  */
-const BloodPressureFlatListItem = ({ item, onEdit, onDelete, swipedComponentId, setSwipedComponentId }: IBloodPressureFlatListItemProps) => {
+const BloodPressureFlatListItem = ({ item, onEdit, onDelete, swipedComponentId, setSwipedComponentId, isSwipeDisabled }: IBloodPressureFlatListItemProps) => {
   const [isShowingNotes, setIsShowingNotes] = useState(false)
   const swipeableRef = useRef<Swipeable>(null)
 
@@ -24,6 +35,20 @@ const BloodPressureFlatListItem = ({ item, onEdit, onDelete, swipedComponentId, 
       swipeableRef.current.close()
     }
   }, [swipedComponentId])
+
+  /**
+   * Reaction to pressing a single flat list item.
+   *
+   * This function will:
+   *
+   * 1. Set the swiped component ID to nothing (causing other swiped components to close)
+   * 2. Display notes for this item, if notes exist.
+   */
+  const onPress = () => {
+    setSwipedComponentId("")
+    if (!item.notes) return;
+    setIsShowingNotes(!isShowingNotes)
+  }
 
   const renderBloodPressureInfo = () => (
     <>
@@ -53,6 +78,7 @@ const BloodPressureFlatListItem = ({ item, onEdit, onDelete, swipedComponentId, 
   // TODO: Make the pressable component change opacity when pressing and NOT swiping
   return (
     <Swipeable
+      enabled={!isSwipeDisabled}
       renderRightActions={renderRightActions}
       overshootFriction={8}
       ref={swipeableRef}
@@ -60,11 +86,7 @@ const BloodPressureFlatListItem = ({ item, onEdit, onDelete, swipedComponentId, 
     >
       <Pressable
         style={styles.tableRow}
-        onPress={() => {
-          setSwipedComponentId("")
-          if (!item.notes) return;
-          setIsShowingNotes(!isShowingNotes)
-        }}
+        onPress={onPress}
       >
         {isShowingNotes ? renderNotes() : renderBloodPressureInfo()}
         <Ionicons name="chatbubble-sharp" color={item.notes ? "black" : "lightgray"} size={28} />
@@ -111,6 +133,13 @@ const styles = StyleSheet.create({
   }
 })
 
+/**
+ * Memoized version of `BloodPressureFlatListItem`.
+ *
+ * Because there can be lots of swiping and pressing on these components,
+ * and react context causes everything to re-render by default,
+ * this memo function ensures that the component only re-renders when it needs to.
+ */
 const memoizedBloodPressureFlatListItem = memo(BloodPressureFlatListItem, (prevProps, newProps) => {
   // If the item itself changes, re-render (props are NOT equal, return false)
   if (prevProps.item.id !== newProps.item.id) return false;

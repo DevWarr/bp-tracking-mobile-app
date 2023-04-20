@@ -1,9 +1,11 @@
 import { StyleSheet, Text, View } from "react-native";
 
 interface IFlatListHeaderProps {
+  /** List of values to display on the header of a FlatList. */
   headerData: string[]
 }
 
+/** Header component for a FlatList. */
 export const FlatListHeader = ({ headerData }: IFlatListHeaderProps) => {
   return (
     <View style={styles.tableHeader}>

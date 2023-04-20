@@ -1,17 +1,20 @@
 import Ionicons from "@expo/vector-icons/Ionicons"
 import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { useContext } from 'react';
 import { StyleSheet, TouchableOpacity, View, } from 'react-native';
 
 import { AppStackParamList } from '../App';
+import { BloodPressureRecordingContext } from "../data/BloodPressureRecordingProvider";
 import { BloodPressureFlatList } from './BloodPressureFlatList/BloodPressureFlatList';
 
 export const MainPage = () => {
+  const bloodPressureRecordings = useContext(BloodPressureRecordingContext)
   const navigation = useNavigation<NavigationProp<AppStackParamList, "MainPage">>();
 
   return (
     <View style={styles.container}>
 
-      <BloodPressureFlatList paddingBottom={120} navigation={navigation}/>
+      <BloodPressureFlatList bloodPressureRecordings={bloodPressureRecordings} paddingBottom={120} navigation={navigation}/>
 
       <View style={styles.footerContainer}>
         <TouchableOpacity
