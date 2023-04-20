@@ -3,7 +3,7 @@ import {
   getStringAsync as getStringFromClipboardAsync,
   setStringAsync as setStringToClipboardAsync,
 } from 'expo-clipboard';
-import React, { useContext, useState } from 'react';
+import { useContext, useState } from 'react';
 import { Alert, Button, StyleSheet, Text, View } from 'react-native';
 import { AppStackParamList } from '../App';
 import { BloodPressureInitialDispatchAction } from '../data/BloodPressureDispatchAction';
@@ -14,7 +14,7 @@ import BloodPressureRecordingJsonMapper from '../models/BloodPressureRecordingJs
 import { BloodPressureFlatList } from './BloodPressureFlatList/BloodPressureFlatList';
 
 
-export const ImportAndExportPage: React.FC = () => {
+export const ImportAndExportPage = () => {
   const bloodPressureRecordings = useContext(BloodPressureRecordingContext)
   const dispatchBloodPressureRecordings = useContext(BloodPressureRecordingDispatchContext)
   const navigation = useNavigation<NavigationProp<AppStackParamList, "ImportAndExportPage">>();

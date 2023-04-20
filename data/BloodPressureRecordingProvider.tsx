@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useReducer, ReactNode } from "react";
+import { createContext, useEffect, useReducer, ReactNode } from "react";
 import { BloodPressureRecording } from "../models/BloodPressureRecording";
 import {
   BloodPressureDispatchAction,
