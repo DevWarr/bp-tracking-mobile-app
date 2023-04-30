@@ -46,9 +46,24 @@ export const formatTimeFromDate = (date: Date, is24hrTime: boolean = true): stri
     return `${timeIn12Hours}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')} ${timeOfDay}`
 }
 
-/** Combines two date objects to return one date object with the date and time from each */
-export const buildDateFromDateAndTime = (dateObjectForDate: Date, dateObjectForTime: Date): Date => {
-    const dateString = dateObjectForDate.toISOString().split("T")[0]
-    const timeString = dateObjectForTime.toISOString().split("T")[1]
-    return new Date(`${dateString}T${timeString}`)
-}
+/**
+ * Combines two date objects to return one date object with the date and time from each.
+ * 
+ * This function:
+ * 
+ * 1. Gets the date from the `dateObjectForDate`
+ * 2. Gets the time form the `dateObjectForTime`
+ * 3. Gets the timezone offset from the `dateObjectForDate` (which should be the same as the `dateObjectForTime`)
+ * 4. Combines all three items together to make the date string for a new `Date` object
+ */
+export const buildDateFromDateAndTime = (dateObjectForDate: Date, dateObjectForTime: Date, timezoneOffsetMinutes: number): Date => {
+    const dateString = dateObjectForDate.toISOString().split("T")[0];
+    const timeString = dateObjectForTime.toISOString().split("T")[1].replace("Z", "");
+    const timeZoneOffsetInHours = timezoneOffsetMinutes / 60;
+    const formattedTimeZoneOffset = `${timeZoneOffsetInHours > 0 ? '-' : '+'}${Math.abs(timeZoneOffsetInHours)
+      .toString()
+      .padStart(2, '0')}:00`;
+    const dateAndTimeString = `${dateString}T${timeString}${formattedTimeZoneOffset}`;
+    console.log({dateString, timeString, timezoneOffsetMinutes, timeZoneOffsetInHours, formattedTimeZoneOffset, dateAndTimeString})
+    return new Date(dateAndTimeString);
+};

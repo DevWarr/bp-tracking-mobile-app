@@ -31,7 +31,7 @@ export const DateTimePickerComponent = ({dateOfRecording, setDateOfRecording, st
   const onDateChangeAndroid = (event: DateTimePickerEvent, dateObjectForDate: Date, dateObjectForTime: Date) => {
     if (event.type === "dismissed") return;
 
-    setDateOfRecording(buildDateFromDateAndTime(dateObjectForDate, dateObjectForTime))
+    setDateOfRecording(buildDateFromDateAndTime(dateObjectForDate, dateObjectForTime, dateObjectForDate.getTimezoneOffset()))
   }
 
   /**
