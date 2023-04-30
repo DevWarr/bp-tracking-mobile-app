@@ -56,14 +56,24 @@ export const formatTimeFromDate = (date: Date, is24hrTime: boolean = true): stri
  * 3. Gets the timezone offset from the `dateObjectForDate` (which should be the same as the `dateObjectForTime`)
  * 4. Combines all three items together to make the date string for a new `Date` object
  */
-export const buildDateFromDateAndTime = (dateObjectForDate: Date, dateObjectForTime: Date, timezoneOffsetMinutes: number): Date => {
-    const dateString = dateObjectForDate.toISOString().split("T")[0];
-    const timeString = dateObjectForTime.toISOString().split("T")[1].replace("Z", "");
-    const timeZoneOffsetInHours = timezoneOffsetMinutes / 60;
-    const formattedTimeZoneOffset = `${timeZoneOffsetInHours > 0 ? '-' : '+'}${Math.abs(timeZoneOffsetInHours)
-      .toString()
-      .padStart(2, '0')}:00`;
-    const dateAndTimeString = `${dateString}T${timeString}${formattedTimeZoneOffset}`;
-    console.log({dateString, timeString, timezoneOffsetMinutes, timeZoneOffsetInHours, formattedTimeZoneOffset, dateAndTimeString})
-    return new Date(dateAndTimeString);
-};
+export const buildDateFromDateAndTime = (
+    dateObjectForDate: Date,
+    dateObjectForTime: Date,
+    timezoneOffset: number
+): Date => {
+    
+    const newDateObjectForTime = new Date(dateObjectForTime.getTime() - timezoneOffset * 60 * 1000)
+    const newDateObjectForDate = new Date(dateObjectForDate.getTime() - timezoneOffset * 60 * 1000)
+
+    const dayDifference = newDateObjectForTime.getUTCDate() - dateObjectForTime.getUTCDate()
+    if ([1, -31, -30, -27].includes(dayDifference)) {
+        newDateObjectForDate.setUTCDate(newDateObjectForDate.getUTCDate() - 1)
+    } else if ([-1, 30, 31, 27].includes(dayDifference)) {
+        newDateObjectForDate.setUTCDate(newDateObjectForDate.getUTCDate() + 1)
+    }
+
+    const dateString = newDateObjectForDate.toISOString().split("T")[0]
+    const timeString = dateObjectForTime.toISOString().split("T")[1]
+    console.log({dateObjectForTime, newDateObjectForTime, dayDifference})
+    return new Date(`${dateString}T${timeString}`)
+}
