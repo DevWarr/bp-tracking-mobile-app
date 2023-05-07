@@ -19,8 +19,8 @@ describe('buildDateFromDateAndTime', () => {
     [
       'New York', // Eastern Daylight Time (UTC-4)
       new Date("2022-05-01T22:00:00-04:00"), // expected result
-      '2022-05-01T00:00:00-04:00', // dateObjectForDate string in New York
-      '1970-02-28T22:00:00-04:00', // dateObjectForTime string in New York (date is Feb 28th, so a day in the past would be March 1st)
+      '2022-05-01T21:00:00-04:00', // dateObjectForDate string in New York
+      '1970-02-28T22:00:00-04:00', // dateObjectForTime string in New York (date is Feb 28th, so a day in the future would be March 1st)
       240,                         // timeTimezoneOffset for New York
     ],
     [
