@@ -17,7 +17,9 @@ interface IDateTimePickerComponentProps {
  *
  * See more here: https://www.npmjs.com/package/@react-native-community/datetimepicker#usage
  */
-export const DateTimePickerComponent = ({dateOfRecording, setDateOfRecording, stopIncrementingDateTime}: IDateTimePickerComponentProps) => {
+export const DateTimePickerComponent = (
+  {dateOfRecording, setDateOfRecording, stopIncrementingDateTime}: IDateTimePickerComponentProps
+) => {
 
   const [isDateTimePickerOpen, setIsDateTimePickerOpen] = useState(false)
 
