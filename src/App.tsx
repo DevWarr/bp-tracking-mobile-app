@@ -6,6 +6,7 @@ import { BloodPressureRecordingFormPage, IBloodPressureRecordingFormRouteParams 
 import { ImportAndExportPage } from "./components/ImportAndExportPage";
 import { MainPage } from "./components/MainPage";
 import { BloodPressureRecordingProvider } from "./data/BloodPressureRecordingProvider";
+import { registerRootComponent } from "expo";
 
 /**
  * Following from here: https://reactnavigation.org/docs/typescript/
@@ -17,7 +18,7 @@ export type AppStackParamList = {
 }
 
 /** Entry point of Application. */
-export default function App() {
+const App = () => {
   const Stack = createNativeStackNavigator<AppStackParamList>();
 
   return (
@@ -36,3 +37,5 @@ export default function App() {
     </GestureHandlerRootView>
   )
 }
+
+export default registerRootComponent(App)
