@@ -38,4 +38,6 @@ const App = () => {
   )
 }
 
+// This allows Expo to understand where the root of the app begins
+//     when the file is inside a different folder.
 export default registerRootComponent(App)
