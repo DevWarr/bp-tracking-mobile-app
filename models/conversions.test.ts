@@ -1,7 +1,7 @@
 import { buildDateFromDateAndTime } from "./conversions";
 
 describe('buildDateFromDateAndTime', () => {
-  const testCases: Array<[string, Date, string, string, number]> = [
+  const testCases: ([string, Date, string, string, number])[] = [
     [
       'UTC',
       new Date("2022-05-01T12:00:00Z"), // expected result
@@ -63,4 +63,3 @@ describe('buildDateFromDateAndTime', () => {
     });
   });
 });
-  

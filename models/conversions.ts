@@ -100,7 +100,7 @@ Why not use the getFullYear, getMonth, getHours, getMinutes, etc methods?
 /**
  * Returns whether the given datetime object, after being converted to UTC,
  * shifts the day into the future or past (or neither)
- * 
+ *
  * @returns A day offset of either 1, 0, or -1
  */
 const getDayOffsetFromTimeAndTimezoneOffset = (dateObjectForTime: Date, timezoneOffsetMinutes: number) => {
@@ -110,7 +110,7 @@ const getDayOffsetFromTimeAndTimezoneOffset = (dateObjectForTime: Date, timezone
 
     // If we need to shift one day into the past
     if ([1, -31, -30, -27].includes(dayDifference)) return -1
-    
+
     // If we need to shift one day into the future
     if ([-1, 30, 31, 27].includes(dayDifference)) return 1
 
@@ -119,7 +119,7 @@ const getDayOffsetFromTimeAndTimezoneOffset = (dateObjectForTime: Date, timezone
 }
 /**
  * Combines two date objects to return one date object with the date and time from each.
- * 
+ *
  * @param {Date} dateObjectForDate the JS date object with the correct date information
  * @param {Date} dateObjectForTime the JS date object with the correct time information
  * @param {number} timezoneOffsetMinutes The number of minutes the given dates are from UTC time
@@ -129,7 +129,7 @@ export const buildDateFromDateAndTime = (
     dateObjectForTime: Date,
     timezoneOffsetMinutes: number
 ): Date => {
-    
+
     // Convert the date into a new Date object where the UTC date matches the local date that was input by the user
     // So, if the user put in 2023-02-28, and the UTC date says 2023-03-01,
     // This conversion would bring the UTC date back to 2023-02-28.
