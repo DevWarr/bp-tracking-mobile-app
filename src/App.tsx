@@ -7,6 +7,7 @@ import { ImportAndExportPage } from "./components/ImportAndExportPage";
 import { MainPage } from "./components/MainPage";
 import { BloodPressureRecordingProvider } from "./data/BloodPressureRecordingProvider";
 import { registerRootComponent } from "expo";
+import { useFonts } from "expo-font";
 
 /**
  * Following from here: https://reactnavigation.org/docs/typescript/
@@ -20,6 +21,13 @@ export type AppStackParamList = {
 /** Entry point of Application. */
 const App = () => {
   const Stack = createNativeStackNavigator<AppStackParamList>();
+  const [isLoaded] = useFonts({
+    "Inter": require("../assets/fonts/Inter-VariableFont_slnt,wght.ttf")
+  })
+
+  if (!isLoaded) {
+    return null;
+  }
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>

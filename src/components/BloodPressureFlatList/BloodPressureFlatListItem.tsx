@@ -16,8 +16,8 @@ interface IBloodPressureFlatListItemProps {
    * If this component's ID doesn't match the swipedComponentId,
    * this component should not be swiped open.
    */
-  swipedComponentId: string;
-  setSwipedComponentId: React.Dispatch<React.SetStateAction<string>>;
+  selectedComponentId: string;
+  setSelectedComponentId: React.Dispatch<React.SetStateAction<string>>;
   isSwipeDisabled: boolean
 }
 
@@ -26,15 +26,20 @@ interface IBloodPressureFlatListItemProps {
  *
  * NOTE: The exported component is the memoized flat list item below this function.
  */
-const BloodPressureFlatListItem = ({ item, onEdit, onDelete, swipedComponentId, setSwipedComponentId, isSwipeDisabled }: IBloodPressureFlatListItemProps) => {
+const BloodPressureFlatListItem = (
+  { item, onEdit, onDelete, selectedComponentId, setSelectedComponentId, isSwipeDisabled }: IBloodPressureFlatListItemProps
+) => {
+
   const [isShowingNotes, setIsShowingNotes] = useState(false)
   const swipeableRef = useRef<Swipeable>(null)
 
   useEffect(() => {
-    if (swipedComponentId !== item.id) {
+    if (selectedComponentId !== item.id) {
+      console.log({selectedComponentId, id: item.id})
       swipeableRef.current.close()
+      setIsShowingNotes(false)
     }
-  }, [swipedComponentId])
+  }, [selectedComponentId])
 
   /**
    * Reaction to pressing a single flat list item.
@@ -45,22 +50,58 @@ const BloodPressureFlatListItem = ({ item, onEdit, onDelete, swipedComponentId, 
    * 2. Display notes for this item, if notes exist.
    */
   const onPress = () => {
-    setSwipedComponentId("")
+    setSelectedComponentId(item.id)
     if (!item.notes) return;
     setIsShowingNotes(!isShowingNotes)
   }
 
-  const renderBloodPressureInfo = () => (
-    <>
-      <Text style={styles.rowText}>{item.dateInfo}</Text>
-      <Text style={styles.rowText}>
-        {item.systolic} / {item.diastolic}
-      </Text>
-      <Text style={styles.rowText}>{item.heartRate}</Text>
-    </>
+  const renderDateComponent = () => (
+    <View>
+      <Text>{item.dateInfo}</Text>
+    </View>
   )
 
-  const renderNotes = () => <Text style={[styles.rowText, styles.notes]}>{item.notes}</Text>
+  const renderBloodPressureInfo = (isShowingNotes: boolean) => (
+    <Swipeable
+      enabled={!isSwipeDisabled}
+      renderRightActions={renderRightActions}
+      overshootFriction={8}
+      ref={swipeableRef}
+      onSwipeableWillOpen={() => setSelectedComponentId(item.id)}
+    >
+      <View style={styles.topView}>
+        <View style={styles.bloodPressureView}>
+          <View style={styles.bloodPressureValueView}>
+            <Text style={styles.bloodPressureValueLabelText}>SYS</Text>
+            <Text style={[styles.bloodPressureValueText, {textAlign: "right"}]}>{item.systolic}</Text>
+          </View >
+          <Text style={styles.bloodPressureSpacer}>/</Text>
+          <View style={styles.bloodPressureValueView}>
+            <Text style={styles.bloodPressureValueLabelText}>DIA</Text>
+            <Text style={[styles.bloodPressureValueText, {textAlign: "left"}]}>{item.diastolic}</Text>
+          </View>
+        </View>
+        <View style={styles.bloodPressureView}>
+          <View style={styles.bloodPressureValueView}>
+            <Text style={styles.bloodPressureValueLabelText}>BPM</Text>
+            <Text style={[styles.bloodPressureValueText, {textAlign: "left"}]}>{item.heartRate}</Text>
+          </View>
+        </View>
+        <Ionicons name="chatbubble-sharp" color={item.notes ? "black" : "lightgray"} size={28} />
+      </View>
+      {!isShowingNotes && <Text style={styles.bloodPressureDate}>{item.dateInfo}</Text>}
+    </Swipeable>
+  )
+
+  const renderNotes = () => (
+    <View style={{marginTop: 16}}>
+      <View style={styles.bloodPressureValueView}>
+        <Text style={[styles.bloodPressureValueLabelText, {textAlign: "left"}]}>NOTES</Text>
+        <Text style={[styles.bloodPressureValueText, styles.notes]}>{item.notes}</Text>
+      </View>
+      <Text style={styles.bloodPressureDate}>{item.dateInfo}</Text>
+    </View>
+  )
 
   const renderRightActions = () => {
     return (
@@ -77,40 +118,91 @@ const BloodPressureFlatListItem = ({ item, onEdit, onDelete, swipedComponentId, 
 
   // TODO: Make the pressable component change opacity when pressing and NOT swiping
   return (
-    <Swipeable
-      enabled={!isSwipeDisabled}
-      renderRightActions={renderRightActions}
-      overshootFriction={8}
-      ref={swipeableRef}
-      onSwipeableWillOpen={() => setSwipedComponentId(item.id)}
+    <Pressable
+      style={styles.bloodPressureItem}
+      onPress={onPress}
     >
-      <Pressable
-        style={styles.tableRow}
-        onPress={onPress}
-      >
-        {isShowingNotes ? renderNotes() : renderBloodPressureInfo()}
-        <Ionicons name="chatbubble-sharp" color={item.notes ? "black" : "lightgray"} size={28} />
-      </Pressable>
-    </Swipeable>
+      {renderBloodPressureInfo(isShowingNotes)}
+      {isShowingNotes && renderNotes()}
+    </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  tableRow: {
-    backgroundColor: "white",
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+  bloodPressureItem: {
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    marginTop: 0,
+    marginHorizontal: 16,
+    marginBottom: 16,
+    padding: 24,
+    paddingBottom: 8,
+    display: "flex",
+    flexDirection: "column",
+    flexWrap: "nowrap",
+  },
+  topView: {
+    width: "100%",
+    display: "flex",
+    flexDirection: "row",
+    flexWrap: "nowrap",
+    justifyContent: "space-between",
+    alignItems: "flex-end",
+  },
+  bloodPressureView: {
+    display: "flex",
+    flexDirection: "row",
+    flexWrap: "nowrap",
+    justifyContent: "space-between",
+    alignItems: "flex-end",
+  },
+  bloodPressureValueView: {
+    display: "flex",
+    flexDirection: "column",
+    flexWrap: "nowrap",
+    justifyContent: "space-between",
+  },
+  bloodPressureValueLabelText: {
+    textAlign: "center",
+    color: "#999",
+    fontSize: 16,
+    marginHorizontal: 0,
+    marginTop: 0,
+    marginBottom: 4,
+  },
+  bloodPressureValueText: {
+    color: "#333",
+    fontSize: 32,
+    margin: 0,
+  },
+  bloodPressureSpacer: {
+    marginTop: 8,
+    marginBottom: 0,
+    marginHorizontal: 8,
+    color: "#333",
+    fontSize: 32,
+  },
+  bloodPressureDate: {
+    display: "flex",
+    flexDirection: "column",
+    flexWrap: "nowrap",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+    marginVertical: 8,
+    color: "#555",
+    fontSize: 16,
+    textAlign: "center",
+    margin: 0,
+    marginTop: 8,
   },
   rowText: {
     fontSize: 16,
     textAlign: 'center',
   },
   notes: {
-    flex: 1,
+    textAlign: "left",
+    fontSize: 24,
   },
   rightActions: {
     flexDirection: 'row',
@@ -147,14 +239,14 @@ const memoizedBloodPressureFlatListItem = memo(BloodPressureFlatListItem, (prevP
   // If the swipedItem changes and it WAS or IS the item id,
   // we want to close the swipe, so we should re-render (props are NOT equal, return false)
   if (
-    prevProps.swipedComponentId !== newProps.swipedComponentId &&
-    (prevProps.swipedComponentId === newProps.item.id || newProps.swipedComponentId === newProps.item.id)
+    prevProps.selectedComponentId !== newProps.selectedComponentId &&
+    (prevProps.selectedComponentId === newProps.item.id || newProps.selectedComponentId === newProps.item.id)
   ) {
     return false;
   }
 
   // If any function signatures change, re-render (props are NOT equal, return false)
-  if (prevProps.onEdit !== newProps.onEdit || prevProps.onDelete !== newProps.onDelete || prevProps.setSwipedComponentId !== newProps.setSwipedComponentId) {
+  if (prevProps.onEdit !== newProps.onEdit || prevProps.onDelete !== newProps.onDelete || prevProps.setSelectedComponentId !== newProps.setSelectedComponentId) {
     return false;
   }
   // Otherwise, don't re-render (props ARE equal, return true)
