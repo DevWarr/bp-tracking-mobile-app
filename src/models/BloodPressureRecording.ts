@@ -2,7 +2,7 @@
 // https://github.com/uuidjs/uuid#getrandomvalues-not-supported
 import 'react-native-get-random-values';
 import { v4 as generateV4UUID } from 'uuid';
-import { convertDateToDateStringAndTimeOfDay } from './conversions';
+import { convertDateToDateStringAndTimeOfDay } from '../conversions/dateTimeConversions';
 
 /**
  * Audit Fields for a model.

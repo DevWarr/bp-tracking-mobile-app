@@ -1,5 +1,5 @@
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { NativeStackNavigationOptions, createNativeStackNavigator } from "@react-navigation/native-stack";
 import { registerRootComponent } from "expo";
 import { useFonts } from "expo-font";
 import { SafeAreaView } from "react-native";
@@ -43,15 +43,49 @@ const App = () => {
         <BloodPressureRecordingProvider>
           <NavigationContainer>
             <Stack.Navigator initialRouteName='MainPage'>
-              <Stack.Screen name="MainPage" component={MainPage} options={{title: "Main Page"}}/>
-              <Stack.Screen name="BloodPressureRecordingForm" component={BloodPressureRecordingFormPage} options={{title: "Blood Pressure Recording Form"}}/>
-              <Stack.Screen name="ImportAndExportPage" component={ImportAndExportPage} options={{title: "Import and Export Page"}}/>
+              <Stack.Screen
+                name="MainPage"
+                component={MainPage}
+                options={navigationOptions.MainPage}
+              />
+              <Stack.Screen
+                name="BloodPressureRecordingForm"
+                component={BloodPressureRecordingFormPage}
+                options={navigationOptions.BloodPressureRecordingForm}
+              />
+              {/* <Stack.Screen
+                name="ImportAndExportPage"
+                component={ImportAndExportPage}
+                options={navigationOptions.ImportAndExportPage}
+              /> */}
+              {/* ImportAndExportPage not in use until CSV exporting is in place */}
             </Stack.Navigator>
           </NavigationContainer>
         </BloodPressureRecordingProvider>
       </SafeAreaView>
     </GestureHandlerRootView>
   )
+}
+
+const navigationOptions: {[key: string]: NativeStackNavigationOptions} =  {
+  MainPage: {
+    title: "Blood Pressure Recordings",
+    headerTitleStyle: {
+      fontFamily: "Inter-SemiBold"
+    }
+  },
+  BloodPressureRecordingForm: {
+    title: "Blood Pressure Recording Form",
+    headerTitleStyle: {
+      fontFamily: "Inter-SemiBold"
+    }
+  },
+  ImportAndExportPage: {
+    title: "Import and Export Page",
+    headerTitleStyle: {
+      fontFamily: "Inter-SemiBold"
+    }
+  },
 }
 
 // This allows Expo to understand where the root of the app begins

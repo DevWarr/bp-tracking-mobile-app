@@ -3,6 +3,7 @@ import { memo, useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
 import { BloodPressureRecording } from '../../models/BloodPressureRecording';
+import { buildColorStyleFromBloodPressure } from '../../conversions/bloodPressureStyles';
 
 interface IBloodPressureFlatListItemProps {
   item: BloodPressureRecording;
@@ -32,6 +33,7 @@ const BloodPressureFlatListItem = (
 
   const [isShowingNotes, setIsShowingNotes] = useState(false)
   const swipeableRef = useRef<Swipeable>(null)
+  const bloodPressureColorStyle = buildColorStyleFromBloodPressure(item.systolic, item.diastolic)
 
   useEffect(() => {
     if (selectedComponentId !== item.id) {
@@ -63,25 +65,29 @@ const BloodPressureFlatListItem = (
       onSwipeableWillOpen={() => setSelectedComponentId(item.id)}
     >
       <View style={styles.topView}>
-        <View style={styles.bloodPressureView}>
-          <View style={styles.bloodPressureValueView}>
-            <Text style={styles.bloodPressureValueLabelText}>SYS</Text>
-            <Text style={[styles.bloodPressureValueText]}>{item.systolic}</Text>
-          </View>
-          <Text style={styles.bloodPressureSpacer}>/</Text>
-          <View style={styles.bloodPressureValueView}>
-            <Text style={styles.bloodPressureValueLabelText}>DIA</Text>
-            <Text style={[styles.bloodPressureValueText]}>{item.diastolic}</Text>
-          </View>
-        </View>
-        <View style={[styles.bloodPressureView, styles.heartRate]}>
-          <View style={styles.bloodPressureValueView}>
-            <Text style={styles.bloodPressureValueLabelText}>BPM</Text>
-            <Text style={[styles.bloodPressureValueText, {textAlign: "center"}]}>{item.heartRate}</Text>
+        <View style={styles.topViewSection}>
+          <View style={styles.bloodPressureView}>
+            <View style={styles.bloodPressureValueView}>
+              <Text style={styles.bloodPressureValueLabelText}>SYS</Text>
+              <Text style={[styles.bloodPressureValueText, bloodPressureColorStyle]}>{item.systolic}</Text>
+            </View>
+            <Text style={styles.bloodPressureSpacer}>/</Text>
+            <View style={styles.bloodPressureValueView}>
+              <Text style={styles.bloodPressureValueLabelText}>DIA</Text>
+              <Text style={[styles.bloodPressureValueText, bloodPressureColorStyle]}>{item.diastolic}</Text>
+            </View>
           </View>
         </View>
-        <View style={[styles.notesIcon]}>
-          <MaterialIcons name="comment" color={item.notes ? "black" : "lightgray"} size={28} />
+        <View style={styles.topViewSection}>
+          <View style={[styles.bloodPressureView, styles.heartRate]}>
+            <View style={styles.bloodPressureValueView}>
+              <Text style={styles.bloodPressureValueLabelText}>BPM</Text>
+              <Text style={[styles.bloodPressureValueText, {textAlign: "center"}]}>{item.heartRate}</Text>
+            </View>
+          </View>
+          <View style={[styles.notesIcon]}>
+            <MaterialIcons name="comment" color={item.notes ? "black" : "lightgray"} size={28} />
+          </View>
         </View>
       </View>
       {!shouldShowNotes && <Text style={styles.bloodPressureDate}>{item.dateInfo}</Text>}
@@ -139,6 +145,13 @@ const styles = StyleSheet.create({
   topView: {
     backgroundColor: "#fff",
     width: "100%",
+    display: "flex",
+    flexDirection: "row",
+    flexWrap: "nowrap",
+    justifyContent: "space-between",
+    alignItems: "flex-end",
+  },
+  topViewSection: {
     display: "flex",
     flexDirection: "row",
     flexWrap: "nowrap",
