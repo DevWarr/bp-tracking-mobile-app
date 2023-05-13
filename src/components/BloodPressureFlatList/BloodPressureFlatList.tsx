@@ -32,7 +32,6 @@ export const BloodPressureFlatList = (
 ) => {
   const bloodPressureRecordingDispatch = useContext(BloodPressureRecordingDispatchContext)
   const [selectedComponentId, setSelectedComponentId] = useState("")
-  console.log({selectedComponentId})
 
   /**
    * Reaction to pressing the edit button on a single flat list item.

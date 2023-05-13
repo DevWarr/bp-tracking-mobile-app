@@ -1,4 +1,4 @@
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { memo, useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
@@ -35,7 +35,6 @@ const BloodPressureFlatListItem = (
 
   useEffect(() => {
     if (selectedComponentId !== item.id) {
-      console.log({selectedComponentId, id: item.id})
       swipeableRef.current.close()
       setIsShowingNotes(false)
     }
@@ -73,21 +72,23 @@ const BloodPressureFlatListItem = (
         <View style={styles.bloodPressureView}>
           <View style={styles.bloodPressureValueView}>
             <Text style={styles.bloodPressureValueLabelText}>SYS</Text>
-            <Text style={[styles.bloodPressureValueText, {textAlign: "right"}]}>{item.systolic}</Text>
-          </View >
+            <Text style={[styles.bloodPressureValueText]}>{item.systolic}</Text>
+          </View>
           <Text style={styles.bloodPressureSpacer}>/</Text>
           <View style={styles.bloodPressureValueView}>
             <Text style={styles.bloodPressureValueLabelText}>DIA</Text>
-            <Text style={[styles.bloodPressureValueText, {textAlign: "left"}]}>{item.diastolic}</Text>
+            <Text style={[styles.bloodPressureValueText]}>{item.diastolic}</Text>
           </View>
         </View>
-        <View style={styles.bloodPressureView}>
+        <View style={[styles.bloodPressureView, styles.heartRate]}>
           <View style={styles.bloodPressureValueView}>
             <Text style={styles.bloodPressureValueLabelText}>BPM</Text>
-            <Text style={[styles.bloodPressureValueText, {textAlign: "left"}]}>{item.heartRate}</Text>
+            <Text style={[styles.bloodPressureValueText, {textAlign: "center"}]}>{item.heartRate}</Text>
           </View>
         </View>
-        <Ionicons name="chatbubble-sharp" color={item.notes ? "black" : "lightgray"} size={28} />
+        <View style={[styles.notesIcon]}>
+          <MaterialIcons name="comment" color={item.notes ? "black" : "lightgray"} size={28} />
+        </View>
       </View>
       {!isShowingNotes && <Text style={styles.bloodPressureDate}>{item.dateInfo}</Text>}
     </Swipeable>
@@ -95,7 +96,7 @@ const BloodPressureFlatListItem = (
 
   const renderNotes = () => (
     <View style={{marginTop: 16}}>
-      <View style={styles.bloodPressureValueView}>
+      <View style={[styles.bloodPressureValueView, {marginTop: 8}]}>
         <Text style={[styles.bloodPressureValueLabelText, {textAlign: "left"}]}>NOTES</Text>
         <Text style={[styles.bloodPressureValueText, styles.notes]}>{item.notes}</Text>
       </View>
@@ -135,13 +136,14 @@ const styles = StyleSheet.create({
     marginTop: 0,
     marginHorizontal: 16,
     marginBottom: 16,
-    padding: 24,
-    paddingBottom: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
     display: "flex",
     flexDirection: "column",
     flexWrap: "nowrap",
   },
   topView: {
+    backgroundColor: "#fff",
     width: "100%",
     display: "flex",
     flexDirection: "row",
@@ -165,43 +167,51 @@ const styles = StyleSheet.create({
   bloodPressureValueLabelText: {
     textAlign: "center",
     color: "#999",
-    fontSize: 16,
+    fontFamily: "Inter-Bold",
+    fontSize: 12,
     marginHorizontal: 0,
     marginTop: 0,
-    marginBottom: 4,
   },
   bloodPressureValueText: {
     color: "#333",
+    fontFamily: "Inter-SemiBold",
     fontSize: 32,
     margin: 0,
+    textAlign: "center",
   },
   bloodPressureSpacer: {
     marginTop: 8,
     marginBottom: 0,
     marginHorizontal: 8,
     color: "#333",
+    fontFamily: "Inter-SemiBold",
     fontSize: 32,
   },
   bloodPressureDate: {
+    backgroundColor: "#fff",
     display: "flex",
     flexDirection: "column",
     flexWrap: "nowrap",
     justifyContent: "space-between",
     alignItems: "center",
     width: "100%",
-    marginVertical: 8,
     color: "#555",
+    fontFamily: "Inter-Bold",
     fontSize: 16,
     textAlign: "center",
     margin: 0,
-    marginTop: 8,
+    paddingTop: 8,
   },
-  rowText: {
-    fontSize: 16,
-    textAlign: 'center',
+  heartRate: {
+    marginLeft: "20%",
+  },
+  notesIcon: {
+    marginBottom: 8,
+    paddingRight: 8,
   },
   notes: {
     textAlign: "left",
+    fontFamily: "Inter-SemiBold",
     fontSize: 24,
   },
   rightActions: {
