@@ -22,7 +22,7 @@ export type AppStackParamList = {
 const App = () => {
   const Stack = createNativeStackNavigator<AppStackParamList>();
   const [isLoaded] = useFonts({
-    "Inter": require("../assets/fonts/Inter-VariableFont_slnt,wght.ttf")
+    "Inter-Regular": require("../assets/fonts/Inter-Regular.ttf")
   })
 
   if (!isLoaded) {
