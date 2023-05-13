@@ -2,7 +2,7 @@ import DateTimePicker, { DateTimePickerAndroid } from "@react-native-community/d
 import { DateTimePickerEvent } from "@react-native-community/datetimepicker"
 import { useState } from "react"
 import { NativeSyntheticEvent, Platform, StyleSheet, TextInput, TextInputFocusEventData } from "react-native"
-import { buildDateFromDateAndTime, formatDateAsYYYYMMDD, formatTimeFromDate } from "../models/conversions"
+import { buildDateFromDateAndTime, formatDateAsYYYYMMDD, formatTimeFromDate } from "../conversions/dateTimeConversions"
 
 interface IDateTimePickerComponentProps {
   dateOfRecording: Date;

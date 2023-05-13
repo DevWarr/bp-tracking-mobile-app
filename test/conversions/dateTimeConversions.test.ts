@@ -1,4 +1,4 @@
-import { buildDateFromDateAndTime } from "../../src/models/conversions";
+import { buildDateFromDateAndTime } from "../../src/conversions/dateTimeConversions";
 
 describe('buildDateFromDateAndTime', () => {
   const testCases: ([string, Date, string, string, number])[] = [
