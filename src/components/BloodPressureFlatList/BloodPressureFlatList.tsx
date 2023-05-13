@@ -8,7 +8,6 @@ import { BloodPressureDispatchAction, BloodPressureDispatchActionType } from "..
 import { BloodPressureRecordingDispatchContext } from "../../data/BloodPressureRecordingProvider";
 import { BloodPressureRecording } from "../../models/BloodPressureRecording"
 import { BloodPressureFlatListItem } from "./BloodPressureFlatListItem"
-import { FlatListHeader } from "./FlatListHeader"
 
 interface IBloodPressureFlatListProps {
   bloodPressureRecordings: BloodPressureRecording[];
@@ -28,10 +27,11 @@ const EmptyListComponent = () => {
 }
 
 /** React Component that loads all BP Recordings from context and displays them in a FlatList. */
-export const BloodPressureFlatList = ({ bloodPressureRecordings, paddingBottom = 0, navigation, isSwipeDisabled }: IBloodPressureFlatListProps) => {
+export const BloodPressureFlatList = (
+  { bloodPressureRecordings, paddingBottom = 0, navigation, isSwipeDisabled }: IBloodPressureFlatListProps
+) => {
   const bloodPressureRecordingDispatch = useContext(BloodPressureRecordingDispatchContext)
-  const headerValues = ["Date/Time", "Blood Pressure", "Heart Rate"]
-  const [swipedComponentId, setSwipedComponentId] = useState("")
+  const [selectedComponentId, setSelectedComponentId] = useState("")
 
   /**
    * Reaction to pressing the edit button on a single flat list item.
@@ -80,15 +80,14 @@ export const BloodPressureFlatList = ({ bloodPressureRecordings, paddingBottom =
       item={item}
       onEdit={onEdit}
       onDelete={onDelete}
-      swipedComponentId={swipedComponentId}
-      setSwipedComponentId={setSwipedComponentId}
+      selectedComponentId={selectedComponentId}
+      setSelectedComponentId={setSelectedComponentId}
       isSwipeDisabled={!!isSwipeDisabled}
     />
-  ), [bloodPressureRecordings, swipedComponentId, isSwipeDisabled])
+  ), [bloodPressureRecordings, selectedComponentId, isSwipeDisabled])
 
   return (
     <View style={styles.table} >
-      <FlatListHeader headerData={headerValues} />
       <FlatList
         style={{paddingBottom: 100}}
         data={bloodPressureRecordings}
@@ -104,6 +103,7 @@ export const BloodPressureFlatList = ({ bloodPressureRecordings, paddingBottom =
 const styles = StyleSheet.create({
   table: {
     width: '100%',
+    marginTop: 20,
     marginBottom: 20,
     maxHeight: "100%",
   },
