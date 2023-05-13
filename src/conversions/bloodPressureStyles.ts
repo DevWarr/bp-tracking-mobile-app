@@ -1,5 +1,3 @@
-import { BloodPressureRecording } from "../models/BloodPressureRecording";
-
 const bloodPressureColors = {
     low: "#42598A",
     healthy: "#4FB6F0",
@@ -10,6 +8,7 @@ const bloodPressureColors = {
 }
 
 export const buildColorStyleFromBloodPressure = (systolic: number, diastolic: number) => {
+    // TODO: write tests!
     // Low blood pressure
     if (systolic < 95 && diastolic <= 60) return {color: bloodPressureColors.low}
     // Normal blood pressure

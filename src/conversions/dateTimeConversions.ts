@@ -37,7 +37,7 @@ export const formatTimeOfDayFromDate = (date: Date) => date.getHours() < 12 ? "A
  */
 export const formatTimeFromDate = (date: Date, is24hrTime: boolean = true): string => {
     if (is24hrTime) {
-        return `${date.getHours()}:${date.getMinutes()}`
+        return `${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}`
     }
 
     const timeIn12Hours = (date.getHours() === 0) ? 12 : date.getHours() % 12

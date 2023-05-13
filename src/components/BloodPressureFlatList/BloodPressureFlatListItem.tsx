@@ -65,6 +65,7 @@ const BloodPressureFlatListItem = (
       onSwipeableWillOpen={() => setSelectedComponentId(item.id)}
     >
       <View style={styles.topView}>
+
         <View style={styles.topViewSection}>
           <View style={styles.bloodPressureView}>
             <View style={styles.bloodPressureValueView}>
@@ -78,8 +79,12 @@ const BloodPressureFlatListItem = (
             </View>
           </View>
         </View>
+
         <View style={styles.topViewSection}>
-          <View style={[styles.bloodPressureView, styles.heartRate]}>
+          <View style={[styles.bloodPressureView, {marginRight: 24}]}>
+            <View style={{marginBottom: 8, marginRight: 4}}>
+              <MaterialCommunityIcons name="heart-pulse" size={28} color="red" />
+            </View>
             <View style={styles.bloodPressureValueView}>
               <Text style={styles.bloodPressureValueLabelText}>BPM</Text>
               <Text style={[styles.bloodPressureValueText, {textAlign: "center"}]}>{item.heartRate}</Text>
@@ -89,6 +94,7 @@ const BloodPressureFlatListItem = (
             <MaterialIcons name="comment" color={item.notes ? "black" : "lightgray"} size={28} />
           </View>
         </View>
+
       </View>
       {!shouldShowNotes && <Text style={styles.bloodPressureDate}>{item.dateInfo}</Text>}
     </Swipeable>
@@ -105,13 +111,17 @@ const BloodPressureFlatListItem = (
   )
 
   const renderRightActions = () => {
+    const heightStyles = {
+      paddingBottom: isShowingNotes ? 0 : 16,
+      paddingTop: isShowingNotes ? 16 : 0
+    }
     return (
       <View style={styles.rightActions}>
-        <TouchableOpacity onPress={() => onEdit(item)} style={styles.editButton}>
-          <MaterialCommunityIcons name="lead-pencil" size={32} color="black" />
+        <TouchableOpacity onPress={() => onEdit(item)} style={[styles.rightActionButton, heightStyles]}>
+          <MaterialCommunityIcons name="lead-pencil" size={32} color="#0b6" />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => onDelete(item)} style={styles.deleteButton}>
-          <MaterialCommunityIcons name="trash-can-outline" size={32} color="black"/>
+        <TouchableOpacity onPress={() => onDelete(item)} style={[styles.rightActionButton, heightStyles]}>
+          <MaterialCommunityIcons name="trash-can" size={32} color="#e33" />
         </TouchableOpacity>
       </View>
     )
@@ -209,9 +219,6 @@ const styles = StyleSheet.create({
     margin: 0,
     paddingTop: 8,
   },
-  heartRate: {
-    marginLeft: "20%",
-  },
   notesIcon: {
     marginBottom: 8,
     paddingRight: 8,
@@ -224,22 +231,15 @@ const styles = StyleSheet.create({
   rightActions: {
     flexDirection: 'row',
     alignItems: 'center',
-    width: 100,
+    width: 116,
+    paddingLeft: 16,
   },
-  deleteButton: {
+  rightActionButton: {
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "red",
     height: "100%",
     width: "50%",
   },
-  editButton: {
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#3c3",
-    height: "100%",
-    width: "50%",
-  }
 })
 
 /**
@@ -251,7 +251,14 @@ const styles = StyleSheet.create({
  */
 const memoizedBloodPressureFlatListItem = memo(BloodPressureFlatListItem, (prevProps, newProps) => {
   // If the item itself changes, re-render (props are NOT equal, return false)
-  if (prevProps.item.id !== newProps.item.id) return false;
+  if (
+    prevProps.item.id !== newProps.item.id
+    || prevProps.item.systolic !== newProps.item.systolic
+    || prevProps.item.diastolic !== newProps.item.diastolic
+    || prevProps.item.date !== newProps.item.date
+    || prevProps.item.heartRate !== newProps.item.heartRate
+    || prevProps.item.notes !== newProps.item.notes
+  ) return false;
 
   // If the swipedItem changes and it WAS or IS the item id,
   // we want to close the swipe, so we should re-render (props are NOT equal, return false)
@@ -266,6 +273,7 @@ const memoizedBloodPressureFlatListItem = memo(BloodPressureFlatListItem, (prevP
   if (prevProps.onEdit !== newProps.onEdit || prevProps.onDelete !== newProps.onDelete || prevProps.setSelectedComponentId !== newProps.setSelectedComponentId) {
     return false;
   }
+
   // Otherwise, don't re-render (props ARE equal, return true)
   return true;
 })

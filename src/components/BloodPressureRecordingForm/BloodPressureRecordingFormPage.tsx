@@ -1,14 +1,14 @@
 import { useNavigation, NavigationProp, Route } from '@react-navigation/native';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { AppStackParamList } from '../App';
-import { BloodPressureDispatchAction, BloodPressureDispatchActionType } from '../data/BloodPressureDispatchAction';
-import { BloodPressureRecordingDispatchContext } from '../data/BloodPressureRecordingProvider';
-import { selectBloodPressureToEdit } from '../hooks/selectBloodPressureToEdit';
-import { useErrorString } from '../hooks/useErrorString';
-import { useIncrementingDateTime } from '../hooks/useIncrementingDate';
-import { useNumberState } from '../hooks/useNumberState';
-import { BloodPressureRecording } from '../models/BloodPressureRecording';
+import { AppStackParamList } from '../../App';
+import { BloodPressureDispatchAction, BloodPressureDispatchActionType } from '../../data/BloodPressureDispatchAction';
+import { BloodPressureRecordingDispatchContext } from '../../data/BloodPressureRecordingProvider';
+import { selectBloodPressureToEdit } from '../../hooks/selectBloodPressureToEdit';
+import { useErrorString } from '../../hooks/useErrorString';
+import { useIncrementingDateTime } from '../../hooks/useIncrementingDate';
+import { useNumberState } from '../../hooks/useNumberState';
+import { BloodPressureRecording } from '../../models/BloodPressureRecording';
 import { DateTimePickerComponent } from './DateTimePickerComponent';
 
 export interface IBloodPressureRecordingFormRouteParams {
