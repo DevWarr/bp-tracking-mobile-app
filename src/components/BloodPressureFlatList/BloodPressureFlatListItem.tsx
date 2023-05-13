@@ -1,4 +1,4 @@
-import { Ionicons, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { memo, useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
@@ -54,13 +54,7 @@ const BloodPressureFlatListItem = (
     setIsShowingNotes(!isShowingNotes)
   }
 
-  const renderDateComponent = () => (
-    <View>
-      <Text>{item.dateInfo}</Text>
-    </View>
-  )
-
-  const renderBloodPressureInfo = (isShowingNotes: boolean) => (
+  const renderBloodPressureInfo = (shouldShowNotes: boolean) => (
     <Swipeable
       enabled={!isSwipeDisabled}
       renderRightActions={renderRightActions}
@@ -90,7 +84,7 @@ const BloodPressureFlatListItem = (
           <MaterialIcons name="comment" color={item.notes ? "black" : "lightgray"} size={28} />
         </View>
       </View>
-      {!isShowingNotes && <Text style={styles.bloodPressureDate}>{item.dateInfo}</Text>}
+      {!shouldShowNotes && <Text style={styles.bloodPressureDate}>{item.dateInfo}</Text>}
     </Swipeable>
   )
 

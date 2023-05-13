@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { useContext } from 'react';
-import { StyleSheet, TouchableOpacity, Text, View, } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, } from 'react-native';
 
 import { AppStackParamList } from '../App';
 import { BloodPressureRecordingContext } from "../data/BloodPressureRecordingProvider";
