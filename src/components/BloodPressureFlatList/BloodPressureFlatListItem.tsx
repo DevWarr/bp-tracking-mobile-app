@@ -33,7 +33,7 @@ const BloodPressureFlatListItem = (
 
   const [isShowingNotes, setIsShowingNotes] = useState(false)
   const swipeableRef = useRef<Swipeable>(null)
-  const bloodPressureColorStyle = buildColorStyleFromBloodPressure(item.systolic, item.diastolic)
+  const bloodPressureColor = buildColorStyleFromBloodPressure(item.systolic, item.diastolic)
 
   useEffect(() => {
     if (selectedComponentId !== item.id) {
@@ -70,12 +70,12 @@ const BloodPressureFlatListItem = (
           <View style={styles.bloodPressureView}>
             <View style={styles.bloodPressureValueView}>
               <Text style={styles.bloodPressureValueLabelText}>SYS</Text>
-              <Text style={[styles.bloodPressureValueText, bloodPressureColorStyle]}>{item.systolic}</Text>
+              <Text style={[styles.bloodPressureValueText, {color: bloodPressureColor}]}>{item.systolic}</Text>
             </View>
             <Text style={styles.bloodPressureSpacer}>/</Text>
             <View style={styles.bloodPressureValueView}>
               <Text style={styles.bloodPressureValueLabelText}>DIA</Text>
-              <Text style={[styles.bloodPressureValueText, bloodPressureColorStyle]}>{item.diastolic}</Text>
+              <Text style={[styles.bloodPressureValueText, {color: bloodPressureColor}]}>{item.diastolic}</Text>
             </View>
           </View>
         </View>
