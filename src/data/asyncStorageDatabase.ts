@@ -14,7 +14,7 @@ export const saveData = async (data: BloodPressureRecording[]): Promise<void> =>
   try {
     await AsyncStorage.setItem('bpData', jsonString);
   } catch (error) {
-    // tslint:disable-next-line:no-console
+    // eslint-disable-next-line no-console
     console.error('Error saving data to AsyncStorage:', error);
   }
 };
@@ -30,7 +30,7 @@ export const loadData = async (): Promise<BloodPressureRecording[]> => {
     const data = await AsyncStorage.getItem('bpData');
 
     if (data == null) {
-      // tslint:disable-next-line:no-console
+      // eslint-disable-next-line no-console
       console.warn('No data found in AsyncStorage');
       return [];
     }
@@ -38,7 +38,7 @@ export const loadData = async (): Promise<BloodPressureRecording[]> => {
     return BloodPressureRecordingJsonMapper.buildBloodPressureRecordingListFromJsonString(data)
 
   } catch (error) {
-    // tslint:disable-next-line:no-console
+    // eslint-disable-next-line no-console
     console.error('Error loading data from AsyncStorage:', error);
     return [];
   }

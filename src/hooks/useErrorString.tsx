@@ -7,7 +7,7 @@ type T_SetErrorStringHook = (errorString: string, millisecondDelayForErrorToGoAw
  */
 export const useErrorString = (): [string, T_SetErrorStringHook] => {
   const [errorString, setErrorStringState] = useState<string>("")
-  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null)
+  const [timeoutId, setTimeoutId] = useState<number | null>(null)
 
   const resetTimout = () => {
     if (!timeoutId) return;
