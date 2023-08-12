@@ -2,8 +2,8 @@ export const bloodPressureColors = {
     low: "#42598A",
     healthy: "#4FB6F0",
     elevated: "#F7D13B",
-    hypertensionOne: "#FFB938",
-    hypertensionTwo: "#E74C3C",
+    hypertensionOne: "#FF8834",
+    hypertensionTwo: "#E73C12",
     extremelyHigh: "#B40F0F"
 }
 

@@ -2,7 +2,6 @@
 // https://github.com/uuidjs/uuid#getrandomvalues-not-supported
 import 'react-native-get-random-values';
 import { v4 as generateV4UUID } from 'uuid';
-import { convertDateToDateStringAndTimeOfDay, formatDateAsYYYYMMDD, formatTimeFromDate } from '../conversions/dateTimeConversions';
 
 /**
  * Audit Fields for a model.
@@ -19,6 +18,10 @@ export class AuditFields {
   ) {}
 }
 
+const TIME_FORMATTING_OPTIONS = {
+  hour: "2-digit",
+  minute: "2-digit"
+}
 
 export class BloodPressureRecording {
 
@@ -42,11 +45,11 @@ export class BloodPressureRecording {
     this.auditFields = auditFields ? auditFields : new AuditFields()
   }
 
-  get dateInfo(): string {
-    const dateString = formatDateAsYYYYMMDD(this.date)
-    const timeString = formatTimeFromDate(this.date, true)
-    return `${dateString} ${timeString}`
-    // const {dateString, timeOfDay} = convertDateToDateStringAndTimeOfDay(this.date)
-    // return `${dateString} ${timeOfDay}`
+  get dateFormatted(): string {
+    return this.date.toLocaleDateString()
+  }
+
+  get timeFormatted(): string {
+    return this.date.toLocaleTimeString(undefined, TIME_FORMATTING_OPTIONS)
   }
 }

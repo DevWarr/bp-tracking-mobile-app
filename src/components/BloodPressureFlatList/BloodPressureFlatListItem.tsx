@@ -56,7 +56,7 @@ const BloodPressureFlatListItem = (
     setIsShowingNotes(!isShowingNotes)
   }
 
-  const renderBloodPressureInfo = (shouldShowNotes: boolean) => (
+  const renderBloodPressureInfo = () => (
     <Swipeable
       enabled={!isSwipeDisabled}
       renderRightActions={renderRightActions}
@@ -96,7 +96,6 @@ const BloodPressureFlatListItem = (
         </View>
 
       </View>
-      {!shouldShowNotes && <Text style={styles.bloodPressureDate}>{item.dateInfo}</Text>}
     </Swipeable>
   )
 
@@ -106,23 +105,27 @@ const BloodPressureFlatListItem = (
         <Text style={[styles.bloodPressureValueLabelText, {textAlign: "left"}]}>NOTES</Text>
         <Text style={[styles.bloodPressureValueText, styles.notes]}>{item.notes}</Text>
       </View>
-      <Text style={styles.bloodPressureDate}>{item.dateInfo}</Text>
     </View>
   )
 
   const renderRightActions = () => {
-    const heightStyles = {
-      paddingBottom: isShowingNotes ? 0 : 16,
-      paddingTop: isShowingNotes ? 16 : 0
-    }
     return (
       <View style={styles.rightActions}>
-        <TouchableOpacity onPress={() => onEdit(item)} style={[styles.rightActionButton, heightStyles]}>
+        <TouchableOpacity onPress={() => onEdit(item)} style={styles.rightActionButton}>
           <MaterialCommunityIcons name="lead-pencil" size={32} color="#0b6" />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => onDelete(item)} style={[styles.rightActionButton, heightStyles]}>
+        <TouchableOpacity onPress={() => onDelete(item)} style={styles.rightActionButton}>
           <MaterialCommunityIcons name="trash-can" size={32} color="#e33" />
         </TouchableOpacity>
+      </View>
+    )
+  }
+
+  const renderDate = () => {
+    return (
+      <View style={styles.bloodPressureDateContainer}>
+        <Text style={styles.bloodPressureDateText}>{item.dateFormatted}</Text>
+        <Text style={styles.bloodPressureDateText}>{item.timeFormatted}</Text>
       </View>
     )
   }
@@ -133,8 +136,9 @@ const BloodPressureFlatListItem = (
       style={styles.bloodPressureItem}
       onPress={onPress}
     >
-      {renderBloodPressureInfo(isShowingNotes)}
+      {renderBloodPressureInfo()}
       {isShowingNotes && renderNotes()}
+      {renderDate()}
     </Pressable>
   );
 }
@@ -204,20 +208,26 @@ const styles = StyleSheet.create({
     fontFamily: "Inter-SemiBold",
     fontSize: 32,
   },
-  bloodPressureDate: {
-    backgroundColor: "#fff",
+  bloodPressureDateContainer: {
+    paddingTop: 8,
+    width: "50%",
+    marginVertical: 0,
+    marginRight: "auto",
+    marginLeft: "auto",
     display: "flex",
-    flexDirection: "column",
+    flexDirection: "row",
     flexWrap: "nowrap",
     justifyContent: "space-between",
-    alignItems: "center",
-    width: "100%",
     color: "#555",
     fontFamily: "Inter-Bold",
     fontSize: 16,
     textAlign: "center",
-    margin: 0,
-    paddingTop: 8,
+  },
+  bloodPressureDateText: {
+    color: "#555",
+    fontFamily: "Inter-Bold",
+    fontSize: 16,
+    textAlign: "center",
   },
   notesIcon: {
     marginBottom: 8,
@@ -226,7 +236,7 @@ const styles = StyleSheet.create({
   notes: {
     textAlign: "left",
     fontFamily: "Inter-SemiBold",
-    fontSize: 24,
+    fontSize: 20,
   },
   rightActions: {
     flexDirection: 'row',
@@ -235,6 +245,8 @@ const styles = StyleSheet.create({
     paddingLeft: 16,
   },
   rightActionButton: {
+    paddingBottom: 0,
+    paddingTop: 16,
     justifyContent: "center",
     alignItems: "center",
     height: "100%",

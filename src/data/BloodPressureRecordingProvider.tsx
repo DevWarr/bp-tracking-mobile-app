@@ -20,7 +20,7 @@ const bloodPressureRecordingReducer = (
 ): BloodPressureRecording[] => {
   if (action instanceof BloodPressureInitialDispatchAction) {
     const newData = action.bloodPressureRecordings;
-    newData.sort((a, b) => b.dateInfo.localeCompare(a.dateInfo))
+    newData.sort((a, b) => b.date.getTime() - a.date.getTime())
     saveData(newData);
     return newData;
   }
@@ -31,7 +31,7 @@ const bloodPressureRecordingReducer = (
 
     case BloodPressureDispatchActionType.NEW: {
       const newData = [...existingBloodPressureRecordings, bloodPressureAction.bloodPressureRecording];
-      newData.sort((a, b) => b.dateInfo.localeCompare(a.dateInfo))
+      newData.sort((a, b) => b.date.getTime() - a.date.getTime())
       saveData(newData);
       return newData;
     }
@@ -44,7 +44,7 @@ const bloodPressureRecordingReducer = (
           return singleBloodPressureRecording;
         }
       })
-      newData.sort((a, b) => b.dateInfo.localeCompare(a.dateInfo))
+      newData.sort((a, b) => b.date.getTime() - a.date.getTime())
       saveData(newData);
       return newData;
     }
