@@ -1,17 +1,3 @@
-export const convertDateToDateStringAndTimeOfDay = (date: Date) => {
-    // Make a copy of the date, just in case we make changes to the object for printing
-    const dateToPrint = new Date(date.getTime());
-    // If we have a time from midnight to 6AM, we'll consider that "PM" of the previous day
-    if (date.getHours() < 6) dateToPrint.setDate(date.getDate() - 1)
-    const dateString = formatDateAsYYYYMMDD(date)
-
-    // AM recording = between 0600 and 1800
-    // PM recording = beteen 1600 and 0600 of the next day
-    const timeOfDay = (6 < dateToPrint.getHours() && dateToPrint.getHours() < 18) ? "AM" : "PM"
-
-    return {dateString, timeOfDay}
-}
-
 /**
  * Creates a string of the given date with YYYY-MM-DD format.
  *
@@ -37,7 +23,7 @@ export const formatTimeOfDayFromDate = (date: Date) => date.getHours() < 12 ? "A
  */
 export const formatTimeFromDate = (date: Date, is24hrTime: boolean = true): string => {
     if (is24hrTime) {
-        return `${date.getHours()}:${date.getMinutes()}`
+        return `${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}`
     }
 
     const timeIn12Hours = (date.getHours() === 0) ? 12 : date.getHours() % 12

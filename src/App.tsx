@@ -4,8 +4,7 @@ import { registerRootComponent } from "expo";
 import { useFonts } from "expo-font";
 import { SafeAreaView } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { BloodPressureRecordingFormPage, IBloodPressureRecordingFormRouteParams } from "./components/BloodPressureRecordingFormPage";
-import { ImportAndExportPage } from "./components/ImportAndExportPage";
+import { BloodPressureRecordingFormPage, IBloodPressureRecordingFormRouteParams } from "./components/BloodPressureRecordingForm/BloodPressureRecordingFormPage";
 import { MainPage } from "./components/MainPage";
 import { BloodPressureRecordingProvider } from "./data/BloodPressureRecordingProvider";
 

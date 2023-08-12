@@ -56,7 +56,7 @@ export const BloodPressureFlatList = (
   const onDelete = useCallback((bloodPressureRecording: BloodPressureRecording) => {
     if (isSwipeDisabled) return;
     // TODO: Could this be done within the list item, instead of as an Alert?
-    Alert.alert("Delete recording", "Are you sure you want to delete?", [
+    Alert.alert("Delete recording", "Are you sure you want to delete this BP recording?", [
       {
         text: "Yes",
         onPress: () => {
@@ -92,7 +92,7 @@ export const BloodPressureFlatList = (
         style={{paddingBottom: 100}}
         data={bloodPressureRecordings}
         renderItem={renderItem}
-        keyExtractor={(item) => `${item.dateInfo}${item.id}`}
+        keyExtractor={(item) => `${item.date.toISOString()}${item.id}`}
         ListFooterComponent={<View style={{paddingBottom}} />}
         ListEmptyComponent={<EmptyListComponent />}
       />

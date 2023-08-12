@@ -1,5 +1,5 @@
 // Convert CSV BP Data to Json
-/* tslint:disable:no-console */
+/* eslint-disable no-console */
 
 const inputString = `2022-12-07 evening ,150,94,58,
 2022-12-08 morning,124,88,85,
